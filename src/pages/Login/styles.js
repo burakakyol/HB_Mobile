@@ -34,7 +34,9 @@ export default {
     alignSelf: 'center',
   },
   img: {
-    height: 200,
+    flex: 1,
+    resizeMode: 'cover',
+    height: 300,
   },
   txt: {
     marginTop: 10,
