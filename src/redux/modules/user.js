@@ -2,70 +2,64 @@
 
 import API_URL from '../../config';
 import { type User } from '../../types/user';
-import * as status from '../enums/actionStatus';
+import { type ReduxDispatch } from '../../types/redux';
+import api from '../../utils/api';
+
 // Actions
 
-export const FETCH_USER_REQUEST = 'FETCH_USER_REQUEST';
-export const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS';
-export const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE';
+export const LOGIN = 'LOGIN';
+export const LOGOUT = 'LOGOUT';
+export const UPDATE = 'UPDATE';
 
 // Action Creator Types
 
-export type FetchUserRequestAction = {
-  type: typeof FETCH_USER_REQUEST,
-};
-
-export type FetchUserSuccessAction = {
-  type: typeof FETCH_USER_SUCCESS,
+export type LoginAction = {
+  type: typeof LOGIN,
   user: User,
 };
 
-export type FetchUserFailureAction = {
-  type: typeof FETCH_USER_FAILURE,
-  error: any,
+export type LogoutAction = {
+  type: typeof LOGOUT,
+};
+
+export type UpdateAction = {
+  type: typeof UPDATE,
+  user: User,
 };
 
 // Action Creators
-const request = (): FetchUserRequestAction => ({
-  type: FETCH_USER_REQUEST,
-});
-
-const success = (user: User): FetchUserSuccessAction => ({
-  type: typeof FETCH_USER_SUCCESS,
+const login = (user: User): LoginAction => ({
+  type: LOGIN,
   user,
 });
 
-const failure = (error: any): FetchUserFailureAction => ({
-  type: typeof FETCH_USER_FAILURE,
-  error,
+const logout = (): LogoutAction => ({
+  type: typeof LOGOUT,
 });
 
-export type UserState = {
-  status: status.INIT | status.LOADING | status.LOADED | status.FAILED,
-  user: Object,
-  error: any,
-};
+const update = (user: User): UpdateAction => ({
+  type: typeof UPDATE,
+  user,
+});
 
-export type UserActions = FetchUserRequestAction | FetchUserSuccessAction | FetchUserFailureAction;
+export type UserState = User;
+
+export type UserActions = LoginAction | LogoutAction | UpdateAction;
 
 // Reducer
 
-const defaultState = {
-  status: status.INIT,
-  user: {},
-  error: null,
-};
+const defaultState = {};
 
 export default function(state: UserState = defaultState, action: UserActions): UserState {
   switch (action.type) {
-    case FETCH_USER_REQUEST:
-      return { status: status.LOADING, user: {}, error: null };
+    case LOGIN:
+      return action.user;
 
-    case FETCH_USER_SUCCESS:
-      return { status: status.LOADED, user: action.user, error: null };
+    case LOGOUT:
+      return defaultState;
 
-    case FETCH_USER_FAILURE:
-      return { status: status.FAILED, user: {}, error: action.error };
+    case UPDATE:
+      return action.user;
 
     default:
       return state;
@@ -74,8 +68,10 @@ export default function(state: UserState = defaultState, action: UserActions): U
 
 // Thunk
 
-export const login=(email:string,password:string):Function=>async(
-    dispatch:ReduxDispatch
-):Promise<*>=>{
-    const user 
-}
+export const loginThunk = (username: string, password: string): Function => async (
+  dispatch: ReduxDispatch,
+): Promise<*> => {
+  const data = { username, password };
+  const response = await api.post('/user/login/', data);
+  dispatch(login(response.user));
+};
