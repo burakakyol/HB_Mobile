@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { create } from 'apisauce';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
 import { Image, ImageBackground, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { loginThunk } from '../../redux/modules/user';
 import { Container, Content, Button, View, Text } from 'native-base';
@@ -60,6 +61,7 @@ class Login extends Component<Props, State> {
                 {this.props.user.status === types.LOADING && (
                   <ActivityIndicator size="large" color="#0000ff" />
                 )}
+
                 <TextInput
                   style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                   onChangeText={text => this.setState({ txtUserName: text })}

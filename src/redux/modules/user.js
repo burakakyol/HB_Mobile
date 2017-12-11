@@ -4,7 +4,7 @@ import API_URL from '../../config';
 import { type User } from '../../types/user';
 import { type ReduxDispatch } from '../../types/redux';
 import * as types from '../../enums/actionStatus';
-import UserMapper from '../../mappers/user';
+import { UserMapper } from '../../mappers/user';
 
 // Actions
 export const REQUEST = 'REQUEST';
@@ -102,6 +102,7 @@ export const loginThunk = (username: string, password: string): Function => asyn
 ): Promise<*> => {
   dispatch(request());
   try {
+    // eslint-disable-next-line no-undef
     const response = await fetch('https://murmuring-eyrie-77138.herokuapp.com/user/login/', {
       method: 'POST',
       headers: {
@@ -118,15 +119,7 @@ export const loginThunk = (username: string, password: string): Function => asyn
       dispatch(failure(json.error));
     } else {
       const user = json.user;
-      const mapUser = {
-        id: user.pk,
-        userName: user.username,
-        email: user.email,
-        firstName: user.first_name || '',
-        lastName: user.last_name || '',
-        dateJoined: user.date_joined || '',
-        isActive: user.is_active,
-      };
+      const mapUser = UserMapper.fromAPIResponse(user);
 
       dispatch(login(mapUser));
     }
