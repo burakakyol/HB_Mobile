@@ -6,12 +6,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import Login from './src/pages/Login';
 import store from './src/redux/configureStore';
 
-export default class App extends React.Component {
+
+class App extends React.Component {
   render() {
-    return;
-    <Provider store={store}>
-      <Login />
-    </Provider>;
+    return (
+      <Provider store={store}>
+        <Login />
+      </Provider>
+    );
   }
 }
 
@@ -23,3 +25,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default App;

@@ -1,1 +1,1 @@
-export const API_ROOT_URL = 'http://localhost:8000';
+export const API_ROOT_URL = 'https://murmuring-eyrie-77138.herokuapp.com';
