@@ -1,6 +1,6 @@
 // @flow
 
-export type INIT = 'INIT';
-export type LOADING = 'LOADING';
-export type LOADED = 'LOADED';
-export type FAILED = 'FAILED';
+export const INIT = 'INIT';
+export const LOADING = 'LOADING';
+export const LOADED = 'LOADED';
+export const FAILED = 'FAILED';

@@ -8,9 +8,9 @@ export const UserMapper = {
       id: response.pk,
       userName: response.username,
       email: response.email,
-      firstName: response.first_name || '',
-      lastName: response.last_name || '',
-      dateJoined: response.date_joined || '',
+      firstName: response.first_name,
+      lastName: response.last_name,
+      dateJoined: response.date_joined,
       isActive: response.is_active,
     };
   },

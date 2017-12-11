@@ -9,11 +9,14 @@ import { loginThunk } from '../../redux/modules/user';
 import { Container, Content, Item, Input, Button, Icon, View, Text } from 'native-base';
 import styles from './styles';
 
+import UserState from '../../redux/modules/user';
+import * as types from '../../enums/actionStatus';
 import logo from '../../assets/img/logo.png';
 import background from '../../assets/img/background.png';
 
 type Props = {
   login: Function,
+  user: UserState,
 };
 const loginTest = async (data: Object): Promise<*> => {
   const api = create({
@@ -36,34 +39,13 @@ class Login extends Component<Props, any> {
 
   componentWillMount() {}
   componentDidMount() {}
-  async fetchUser() {
-    try {
-      const response = await fetch('https://murmuring-eyrie-77138.herokuapp.com/user/login/', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: 'buraks9',
-          password: 'ps1oqmaq',
-        }),
-      });
-      const json = await response.json();
 
-      const user = json.user;
-
-      this.setState({ user });
-    } catch (err) {
-      console.error(err);
-    }
-  }
   render() {
     const api = create({
       baseURL: 'https://murmuring-eyrie-77138.herokuapp.com',
     });
     const asd = '';
-
+    console.log('prop', this.props.user);
     return (
       <Container>
         <View style={styles.container}>
@@ -73,17 +55,20 @@ class Login extends Component<Props, any> {
                 <Button
                   style={styles.btn}
                   onPress={() => {
-                    this.fetchUser();
                     this.props.login('buraks9', 'ps1oqmaq');
                   }}
                 >
                   <Text>Login</Text>
                 </Button>
                 <Text style={styles.txt}> or </Text>
-                <Text>state:{this.state.user ? this.state.user.username : ''}</Text>
-                <Text>props:{this.props.user ? this.props.user.userName : ''}</Text>
+
+                <Text>
+                  prop:{this.props.user.status === types.LOADING
+                    ? 'loading'
+                    : this.props.user.user.userName}
+                </Text>
                 <Button style={styles.btn}>
-                  <Text>Login withh Facebook </Text>
+                  <Text>Login with Facebook </Text>
                 </Button>
               </View>
             </ImageBackground>
