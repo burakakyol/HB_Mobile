@@ -64,6 +64,7 @@ const update = (user: User): UpdateAction => ({
 export type UserState = {
   user: any,
   status: any,
+  error?: any,
 };
 
 export type UserActions = RequestAction | LoginAction | LogoutAction | UpdateAction | FailureAction;
@@ -81,7 +82,7 @@ export default function(state: UserState = defaultState, action: UserActions): U
       return { user: action.user, status: types.LOADED };
 
     case FAILED:
-      return { user: null, status: types.FAILED };
+      return { user: null, status: types.FAILED, error: action.error };
 
     case LOGOUT:
       return { user: null, status: types.LOADED };
@@ -113,19 +114,22 @@ export const loginThunk = (username: string, password: string): Function => asyn
       }),
     });
     const json = await response.json();
+    if (json.error) {
+      dispatch(failure(json.error));
+    } else {
+      const user = json.user;
+      const mapUser = {
+        id: user.pk,
+        userName: user.username,
+        email: user.email,
+        firstName: user.first_name || '',
+        lastName: user.last_name || '',
+        dateJoined: user.date_joined || '',
+        isActive: user.is_active,
+      };
 
-    const user = json.user;
-    const mapUser = {
-      id: user.pk,
-      userName: user.username,
-      email: user.email,
-      firstName: user.first_name || '',
-      lastName: user.last_name || '',
-      dateJoined: user.date_joined || '',
-      isActive: user.is_active,
-    };
-
-    dispatch(login(mapUser));
+      dispatch(login(mapUser));
+    }
   } catch (err) {
     console.error(err);
     dispatch(failure(err));
