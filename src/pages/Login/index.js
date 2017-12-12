@@ -4,16 +4,25 @@ import React, { Component } from 'react';
 import { create } from 'apisauce';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Image, ImageBackground, Alert } from 'react-native';
+
+import { Image, ImageBackground, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { loginThunk } from '../../redux/modules/user';
-import { Container, Content, Item, Input, Button, Icon, View, Text } from 'native-base';
+import { Container, Content, Button, View, Text } from 'native-base';
 import styles from './styles';
 
+import UserState from '../../redux/modules/user';
+import * as types from '../../enums/actionStatus';
 import logo from '../../assets/img/logo.png';
 import background from '../../assets/img/background.png';
+import { User } from '../../types/user';
 
 type Props = {
   login: Function,
+  user: UserState,
+};
+type State = {
+  txtUserName: string,
+  txtPassword: string,
 };
 const loginTest = async (data: Object): Promise<*> => {
   const api = create({
@@ -28,36 +37,15 @@ const loginTest = async (data: Object): Promise<*> => {
   return response.data.user;
 };
 
-class Login extends Component<Props, any> {
+class Login extends Component<Props, State> {
   constructor(props) {
     super(props);
-    this.state = { user: null };
+    this.state = { txtUserName: '', txtPassword: '' };
   }
 
   componentWillMount() {}
   componentDidMount() {}
-  async fetchUser() {
-    try {
-      const response = await fetch('https://murmuring-eyrie-77138.herokuapp.com/user/login/', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: 'buraks9',
-          password: 'ps1oqmaq',
-        }),
-      });
-      const json = await response.json();
 
-      const user = json.user;
-
-      this.setState({ user });
-    } catch (err) {
-      console.error(err);
-    }
-  }
   render() {
     const api = create({
       baseURL: 'https://murmuring-eyrie-77138.herokuapp.com',
@@ -70,20 +58,39 @@ class Login extends Component<Props, any> {
           <Content>
             <ImageBackground source={background} style={styles.shadow}>
               <View style={styles.bg}>
+                {this.props.user.status === types.LOADING && (
+                  <ActivityIndicator size="large" color="#0000ff" />
+                )}
+
+                <TextInput
+                  style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                  onChangeText={text => this.setState({ txtUserName: text })}
+                  value={this.state.txtUserName}
+                />
+                <TextInput
+                  style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                  onChangeText={text => this.setState({ txtPassword: text })}
+                  value={this.state.txtPassword}
+                  secureTextEntry
+                />
                 <Button
                   style={styles.btn}
                   onPress={() => {
-                    this.fetchUser();
-                    this.props.login('buraks9', 'ps1oqmaq');
+                    this.props.login(this.state.txtUserName, this.state.txtPassword);
                   }}
                 >
                   <Text>Login</Text>
                 </Button>
                 <Text style={styles.txt}> or </Text>
-                <Text>state:{this.state.user ? this.state.user.username : ''}</Text>
-                <Text>props:{this.props.user ? this.props.user.userName : ''}</Text>
+                {this.props.user.status === types.FAILED && (
+                  <Text>Hata!{this.props.user.error} </Text>
+                )}
+                {this.props.user.status === types.LOADED && (
+                  <Text>Hoşgeldin {this.props.user.user.userName} </Text>
+                )}
+
                 <Button style={styles.btn}>
-                  <Text>Login withh Facebook </Text>
+                  <Text>Login with Facebook </Text>
                 </Button>
               </View>
             </ImageBackground>
