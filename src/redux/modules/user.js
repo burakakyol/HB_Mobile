@@ -5,7 +5,7 @@ import { type User } from '../../types/user';
 import { type ReduxDispatch } from '../../types/redux';
 import * as types from '../../enums/actionStatus';
 import { UserMapper } from '../../mappers/user';
-
+import UserStorage from '../../services/userStorage';
 // Actions
 export const REQUEST = 'REQUEST';
 export const FAILED = 'FAILED';
@@ -120,7 +120,7 @@ export const loginThunk = (username: string, password: string): Function => asyn
     } else {
       const user = json.user;
       const mapUser = UserMapper.fromAPIResponse(user);
-
+      UserStorage.save(mapUser);
       dispatch(login(mapUser));
     }
   } catch (err) {
