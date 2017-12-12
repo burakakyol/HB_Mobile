@@ -15,7 +15,7 @@ import styles from './styles';
 import UserState from '../../redux/modules/user';
 import * as types from '../../enums/actionStatus';
 import logo from '../../assets/img/logo.png';
-import background2 from '../../assets/img/background2.png';
+import background from '../../assets/img/background.png';
 import { User } from '../../types/user';
 
 type Props = {
@@ -59,7 +59,7 @@ class Login extends Component<Props, State> {
       <Container>
         <View style={styles.container}>
           <Content>
-            <ImageBackground source={background2} style={styles.shadow}>
+            <ImageBackground source={background} style={styles.shadow}>
               <View style={styles.bg}>
                 {this.props.user.status === types.LOADING && (
                   <ActivityIndicator size="large" color="#0000ff" />
