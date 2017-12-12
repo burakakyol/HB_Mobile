@@ -6,6 +6,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { Image, ImageBackground, Alert, TextInput, ActivityIndicator } from 'react-native';
+import { FormLabel, FormInput } from 'react-native-elements';
+import {} from 'react-navigation';
 import { loginThunk } from '../../redux/modules/user';
 import { Container, Content, Button, View, Text } from 'native-base';
 import styles from './styles';
@@ -19,6 +21,7 @@ import { User } from '../../types/user';
 type Props = {
   login: Function,
   user: UserState,
+  navigation: any,
 };
 type State = {
   txtUserName: string,
@@ -61,13 +64,14 @@ class Login extends Component<Props, State> {
                 {this.props.user.status === types.LOADING && (
                   <ActivityIndicator size="large" color="#0000ff" />
                 )}
-
-                <TextInput
+                <FormLabel> Kullanıcı Adı </FormLabel>
+                <FormInput
                   style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                   onChangeText={text => this.setState({ txtUserName: text })}
                   value={this.state.txtUserName}
                 />
-                <TextInput
+                <FormLabel> Şifre </FormLabel>
+                <FormInput
                   style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                   onChangeText={text => this.setState({ txtPassword: text })}
                   value={this.state.txtPassword}
@@ -80,6 +84,14 @@ class Login extends Component<Props, State> {
                   }}
                 >
                   <Text>Login</Text>
+                </Button>
+                <Button
+                  style={styles.btn}
+                  onPress={() => {
+                    this.props.navigation.navigate('Register');
+                  }}
+                >
+                  <Text> Kayıt Ol </Text>
                 </Button>
                 <Text style={styles.txt}> or </Text>
                 {this.props.user.status === types.FAILED && (
