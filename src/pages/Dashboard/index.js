@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { Card, Button, FormLabel, FormInput } from 'react-native-elements';
 import { Container, Content, View, Text } from 'native-base';
-import { UserState } from '../../redux/modules/user';
+import { type UserState } from '../../redux/modules/user';
 
 type Props = {
   user: UserState,
@@ -16,9 +16,7 @@ class Dashboard extends Component<Props, any> {
     return (
       <Container>
         <View>
-          <Content>
-            <FormLabel> {user.user.userName}</FormLabel>
-          </Content>
+          <Content>{user && <FormLabel> {user.user.userName}</FormLabel>}</Content>
         </View>
       </Container>
     );

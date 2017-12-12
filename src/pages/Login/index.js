@@ -8,15 +8,15 @@ import { connect } from 'react-redux';
 import { Image, ImageBackground, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { FormLabel, FormInput, Button } from 'react-native-elements';
 
-import { loginThunk } from '../../redux/modules/user';
+import { loginThunk, login, type UserState } from '../../redux/modules/user';
 import { Container, Content, View, Text } from 'native-base';
 import styles from './styles';
+import UserStorage from '../../services/userStorage';
 
-import UserState from '../../redux/modules/user';
 import * as types from '../../enums/actionStatus';
 import logo from '../../assets/img/logo.png';
 import background from '../../assets/img/background.png';
-import { User } from '../../types/user';
+import { type User } from '../../types/user';
 
 type Props = {
   login: Function,
@@ -34,7 +34,20 @@ class Login extends Component<Props, State> {
     this.state = { txtUserName: '', txtPassword: '' };
   }
 
-  componentWillMount() {}
+  componentWillMount() {
+    const user = this.getUserFromStorage().done();
+    console.log(user);
+    if (user) {
+      this.props.login(user);
+      Alert.alert(user.userName);
+    }
+  }
+
+  async getUserFromStorage() {
+    const userFromStorage = await UserStorage.get();
+    return userFromStorage;
+  }
+
   componentDidMount() {}
 
   render() {
@@ -105,6 +118,6 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ login: loginThunk }, dispatch);
+  return bindActionCreators({ login: loginThunk, loginToState: login }, dispatch);
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
