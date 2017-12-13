@@ -3,15 +3,15 @@ import React from 'react';
 import { Provider } from 'react-redux';
 
 import { StyleSheet, Text, View } from 'react-native';
-import Login from './src/pages/Login';
+import { createRootNavigator } from './src/router';
 import store from './src/redux/configureStore';
-
 
 class App extends React.Component {
   render() {
+    const Layout = createRootNavigator();
     return (
       <Provider store={store}>
-        <Login />
+        <Layout />
       </Provider>
     );
   }

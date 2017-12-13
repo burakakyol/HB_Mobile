@@ -5,7 +5,7 @@ import { type User } from '../../types/user';
 import { type ReduxDispatch } from '../../types/redux';
 import * as types from '../../enums/actionStatus';
 import { UserMapper } from '../../mappers/user';
-
+import UserStorage from '../../services/userStorage';
 // Actions
 export const REQUEST = 'REQUEST';
 export const FAILED = 'FAILED';
@@ -38,7 +38,7 @@ export type UpdateAction = {
 };
 
 // Action Creators
-const login = (user: User): LoginAction => ({
+export const login = (user: User): LoginAction => ({
   type: LOGIN,
   user,
 });
@@ -52,11 +52,11 @@ const failure = (error: any): FailureAction => ({
   error,
 });
 
-const logout = (): LogoutAction => ({
+export const logout = (): LogoutAction => ({
   type: typeof LOGOUT,
 });
 
-const update = (user: User): UpdateAction => ({
+export const update = (user: User): UpdateAction => ({
   type: typeof UPDATE,
   user,
 });
@@ -120,7 +120,7 @@ export const loginThunk = (username: string, password: string): Function => asyn
     } else {
       const user = json.user;
       const mapUser = UserMapper.fromAPIResponse(user);
-
+      await UserStorage.save(mapUser);
       dispatch(login(mapUser));
     }
   } catch (err) {

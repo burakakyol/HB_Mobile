@@ -6,35 +6,26 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { Image, ImageBackground, Alert, TextInput, ActivityIndicator } from 'react-native';
-import { loginThunk } from '../../redux/modules/user';
-import { Container, Content, Button, View, Text } from 'native-base';
-import styles from './styles';
+import { FormLabel, FormInput, Button } from 'react-native-elements';
 
-import UserState from '../../redux/modules/user';
+import { loginThunk, login, type UserState } from '../../redux/modules/user';
+import { Container, Content, View, Text } from 'native-base';
+import styles from './styles';
+import UserStorage from '../../services/userStorage';
+
 import * as types from '../../enums/actionStatus';
 import logo from '../../assets/img/logo.png';
 import background from '../../assets/img/background.png';
-import { User } from '../../types/user';
+import { type User } from '../../types/user';
 
 type Props = {
   login: Function,
   user: UserState,
+  navigation: any,
 };
 type State = {
   txtUserName: string,
   txtPassword: string,
-};
-const loginTest = async (data: Object): Promise<*> => {
-  const api = create({
-    baseURL: 'https://murmuring-eyrie-77138.herokuapp.com',
-  });
-  const response = await api.post('/user/login/', data);
-
-  if (!response.ok) {
-    throw response.data;
-  }
-
-  return response.data.user;
 };
 
 class Login extends Component<Props, State> {
@@ -43,7 +34,20 @@ class Login extends Component<Props, State> {
     this.state = { txtUserName: '', txtPassword: '' };
   }
 
-  componentWillMount() {}
+  componentWillMount() {
+    const user = this.getUserFromStorage().done();
+    console.log(user);
+    if (user) {
+      this.props.login(user);
+      Alert.alert(user.userName);
+    }
+  }
+
+  async getUserFromStorage() {
+    const userFromStorage = await UserStorage.get();
+    return userFromStorage;
+  }
+
   componentDidMount() {}
 
   render() {
@@ -61,37 +65,44 @@ class Login extends Component<Props, State> {
                 {this.props.user.status === types.LOADING && (
                   <ActivityIndicator size="large" color="#0000ff" />
                 )}
-
-                <TextInput
+                <FormLabel> Kullanıcı Adı </FormLabel>
+                <FormInput
                   style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                   onChangeText={text => this.setState({ txtUserName: text })}
                   value={this.state.txtUserName}
+                  placeholder="Kullanıcı adı..."
                 />
-                <TextInput
+                <FormLabel> Şifre </FormLabel>
+                <FormInput
                   style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                   onChangeText={text => this.setState({ txtPassword: text })}
                   value={this.state.txtPassword}
                   secureTextEntry
+                  placeholder="Şifre..."
                 />
                 <Button
                   style={styles.btn}
+                  title="Giriş Yap"
+                  large
                   onPress={() => {
                     this.props.login(this.state.txtUserName, this.state.txtPassword);
                   }}
-                >
-                  <Text>Login</Text>
-                </Button>
-                <Text style={styles.txt}> or </Text>
+                />
+                <Text style={{ textAlign: 'center', marginTop: 7 }}>henüz üye olmadıysanız</Text>
+                <Button
+                  style={styles.btn}
+                  title="Kayıt ol"
+                  onPress={() => {
+                    this.props.navigation.navigate('Register');
+                  }}
+                />
+
                 {this.props.user.status === types.FAILED && (
                   <Text>Hata!{this.props.user.error} </Text>
                 )}
                 {this.props.user.status === types.LOADED && (
                   <Text>Hoşgeldin {this.props.user.user.userName} </Text>
                 )}
-
-                <Button style={styles.btn}>
-                  <Text>Login with Facebook </Text>
-                </Button>
               </View>
             </ImageBackground>
           </Content>
@@ -107,6 +118,6 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ login: loginThunk }, dispatch);
+  return bindActionCreators({ login: loginThunk, loginToState: login }, dispatch);
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
