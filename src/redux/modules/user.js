@@ -12,11 +12,15 @@ export const FAILED = 'FAILED';
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const UPDATE = 'UPDATE';
+export const REGISTER = 'REGISTER';
 
 // Action Creator Types
 
 export type RequestAction = {
   type: typeof REQUEST,
+};
+export type RegisterAction = {
+  type: REGISTER,
 };
 
 export type FailureAction = {
@@ -43,6 +47,12 @@ export const login = (user: User): LoginAction => ({
   user,
 });
 
+export const register = (message: string, status: string): RegisterAction => ({
+  type: REGISTER,
+  message,
+  status,
+});
+
 const request = (): RequestAction => ({
   type: REQUEST,
 });
@@ -67,7 +77,13 @@ export type UserState = {
   error?: any,
 };
 
-export type UserActions = RequestAction | LoginAction | LogoutAction | UpdateAction | FailureAction;
+export type UserActions =
+  | RequestAction
+  | LoginAction
+  | LogoutAction
+  | UpdateAction
+  | FailureAction
+  | RegisterAction;
 
 // Reducer
 
@@ -90,12 +106,51 @@ export default function(state: UserState = defaultState, action: UserActions): U
     case UPDATE:
       return { user: action.user, status: types.LOADED };
 
+    case REGISTER:
+      return { user: null, status: action.status, message: action.message };
+
     default:
       return state;
   }
 }
 
 // Thunk
+
+export const registerThunk = (
+  username: string,
+  email: string,
+  name: string,
+  surname: string,
+  password: string,
+): Function => async (dispatch: ReduxDispatch): Promise<*> => {
+  try {
+    // eslint-disable-next-line no-undef
+    const response = await fetch('https://murmuring-eyrie-77138.herokuapp.com/user/register/', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        email,
+        name,
+        surname,
+        password,
+      }),
+    });
+    const json = await response.json();
+    if (json.error) {
+      dispatch(failure(json.error));
+    } else {
+      const message = json.message;
+      const status = json.status;
+      dispatch(register(message, status));
+    }
+  } catch (error) {
+    dispatch(failure((error: error)));
+  }
+};
 
 export const loginThunk = (username: string, password: string): Function => async (
   dispatch: ReduxDispatch,
