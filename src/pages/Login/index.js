@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import { create } from 'apisauce';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
+import { Container, Content, View, Text } from 'native-base';
 import { Image, ImageBackground, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { FormLabel, FormInput, Button } from 'react-native-elements';
 
 import { loginThunk, login, type UserState } from '../../redux/modules/user';
-import { Container, Content, View, Text } from 'native-base';
+
 import styles from './styles';
 import UserStorage from '../../services/userStorage';
 
