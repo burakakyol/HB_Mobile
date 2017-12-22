@@ -1,4 +1,5 @@
 // @flow
+import { type ProcessUser } from './process';
 
 export type Task = {
   id: number,
@@ -8,4 +9,11 @@ export type Task = {
   isCompleted: true,
   progress: number,
   startDate: string,
+  manager: ProcessUser,
+  member: TaskUser,
+};
+
+export type TaskUser = {
+  id: number,
+  member: ProcessUser,
 };
