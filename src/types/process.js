@@ -10,6 +10,7 @@ export type Process = {
   endDate: string,
   isCompleted: boolean,
   isActive: boolean,
+  members: Array<ProcessUser>,
 };
 
 export type ProcessUser = {
