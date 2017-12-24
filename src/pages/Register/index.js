@@ -1,11 +1,11 @@
 // @flow
 import React, { Component } from 'react';
-import { Alert } from 'react-native';
+import { Alert, ActivityIndicator } from 'react-native';
 import { View, Content } from 'native-base';
 import { Card, Button, FormLabel, FormInput, Text } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
+import * as types from '../../enums/actionStatus';
 import { registerThunk as registerUser } from '../../redux/modules/user';
 import styles from './style';
 
@@ -49,14 +49,16 @@ class Register extends Component<Props, State> {
         this.state.surname,
         this.state.password,
       );
-
-    
     } else {
       Alert.alert('Şifreler eşleşmiyor');
     }
   }
 
   render() {
+    if (this.props.user.error) {
+      Alert.alert(this.props.user.error);
+    }
+
     return (
       <Content>
         <View style={styles.card}>
@@ -99,8 +101,12 @@ class Register extends Component<Props, State> {
               value={this.state.passwordConfirm || ''}
               onChangeText={val => this.setState({ passwordConfirm: val })}
             />
-           {this.props.user.status && <Text> {this.props.user.message} </Text>}
+
             <Button title="Gönder" large onPress={this.onSubmitEvent} />
+            {this.props.user.status === types.LOADING && (
+              <ActivityIndicator size="large" color="#0000ff" />
+            )}
+            {this.props.user.status && <Text> {this.props.user.message} </Text>}
           </Card>
         </View>
       </Content>

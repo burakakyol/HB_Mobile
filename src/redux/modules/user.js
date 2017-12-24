@@ -123,6 +123,7 @@ export const registerThunk = (
   surname: string,
   password: string,
 ): Function => async (dispatch: ReduxDispatch): Promise<*> => {
+  dispatch(request());
   try {
     // eslint-disable-next-line no-undef
     const response = await fetch('https://murmuring-eyrie-77138.herokuapp.com/user/register/', {

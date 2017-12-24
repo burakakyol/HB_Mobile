@@ -43,6 +43,13 @@ class Login extends Component<Props, State> {
     }
   }
 
+  componentWillReceiveProps(nextProps){
+    if(nextProps.user.status===types.LOADED){
+      this.props.navigation.navigate('Dashboard');
+    }
+
+  }
+
   async getUserFromStorage() {
     const userFromStorage = await UserStorage.get();
     return userFromStorage;
@@ -55,6 +62,10 @@ class Login extends Component<Props, State> {
       baseURL: 'https://murmuring-eyrie-77138.herokuapp.com',
     });
     const asd = '';
+    if (this.props.user.status === types.LOADED) {
+      Alert.alert(`Hoşgeldin ${this.props.user.user.userName}`);
+      
+    }
 
     return (
       <Container>
@@ -96,13 +107,6 @@ class Login extends Component<Props, State> {
                     this.props.navigation.navigate('Register');
                   }}
                 />
-
-                {this.props.user.status === types.FAILED && (
-                  <Text>Hata!{this.props.user.error} </Text>
-                )}
-                {this.props.user.status === types.LOADED && (
-                  <Text>Hoşgeldin {this.props.user.user.userName} </Text>
-                )}
               </View>
             </ImageBackground>
           </Content>
