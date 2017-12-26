@@ -32,9 +32,13 @@ class ProjectList extends Component<Props, any> {
 
   constructor(props) {
     super(props);
+    this.navigateProjectPage = this.navigateProjectPage.bind(this);
   }
   navigateNewProject() {
     this.props.navigation.navigate('NewProject');
+  }
+  navigateProjectPage() {
+    this.props.navigation.navigate('ProjectPage');
   }
 
   componentWillMount() {
@@ -61,7 +65,11 @@ class ProjectList extends Component<Props, any> {
             )}
             <Card>
               {this.props.project.projects.map(project => (
-                <ProjectItem key={project.id} project={project.project} />
+                <ProjectItem
+                  key={project.id}
+                  project={project.project}
+                  onClick={this.navigateProjectPage}
+                />
               ))}
             </Card>
           </Content>
