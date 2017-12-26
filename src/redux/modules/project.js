@@ -104,9 +104,9 @@ export default function(state: ProjectState = defaultState, action: ProjectActio
     case CREATE:
       return {
         currentProject: {},
-        projects: [...state.projects, action.project],
-        status: action.status,
-        message: action.message,
+        projects: [...state.projects],
+        status: action.message,
+        message: action.status,
       };
 
     case GET_PROJECTS:
@@ -144,6 +144,7 @@ export const getProjectsThunk = (userId: number): Function => async (
   try {
     request();
     // eslint-disable-next-line no-undef
+    console.log('istek gönderiliyor...');
     const response = await fetch(
       `https://murmuring-eyrie-77138.herokuapp.com/user/${userId}/projects/`,
       {
@@ -154,8 +155,11 @@ export const getProjectsThunk = (userId: number): Function => async (
         },
       },
     );
+    console.log('response..');
     const json = await response.json();
-    const projects = ProjectUserMapper.fromAPIResponseMultiple(json);
+    console.log('response döndü..');
+    const projects = ProjectUserMapper.fromAPIResponseMultiple(json.projects);
+    console.log(projects);
     dispatch(getProjects(projects));
   } catch (error) {
     dispatch(failure(error));
