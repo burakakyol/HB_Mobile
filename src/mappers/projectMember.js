@@ -1,7 +1,7 @@
 // @flow
 
 import { type ProjectUser } from '../types/project';
-import UserMapper from './user';
+import { UserMapper } from './user';
 
 export const ProjectUserMapper = {
   fromAPIResponse(response: Object = {}): ProjectUser {
