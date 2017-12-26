@@ -33,8 +33,7 @@ class Profile extends Component<Props, any> {
 
   render() {
     const { user, project } = this.props;
-    console.log('Kullanıcı', user);
-    console.log('Proje', project);
+
     return (
       <View style={{ paddingVertical: 20 }}>
         <Card title={user.user ? `${user.user.firstName} ${user.user.lastName}` : ''}>

@@ -55,7 +55,9 @@ export const ProtectedRoute = TabNavigator(
       screen: Profile,
       navigationOptions: {
         tabBarLabel: 'Profil',
-        tabBarIcon: ({ tintColor }) => <FontAwesome name="home" size={30} color={tintColor} />,
+        tabBarIcon: ({ tintColor }) => (
+          <FontAwesome name="user-circle" size={30} color={tintColor} />
+        ),
       },
     },
   },

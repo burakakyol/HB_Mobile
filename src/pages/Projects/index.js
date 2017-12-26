@@ -25,9 +25,7 @@ class Projects extends Component<Props, any> {
     this.props.getProjects(this.props.user.user.id);
   }
 
-  componentDidMount() {
-    console.log(this.props.project);
-  }
+  componentDidMount() {}
   render() {
     return (
       <Container>
@@ -47,13 +45,5 @@ class Projects extends Component<Props, any> {
     );
   }
 }
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ getProjects: getProjectsThunk }, dispatch);
-}
-function mapStateToProps(state) {
-  return {
-    user: state.currentUser,
-    project: state.project,
-  };
-}
-export default connect(mapStateToProps, mapDispatchToProps)(Projects);
+
+export default Projects;
