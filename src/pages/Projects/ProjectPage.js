@@ -11,9 +11,23 @@ type Props = {
 };
 
 class ProjectPage extends Component {
+  constructor(props) {
+    super(props);
+  }
   render() {
-    return <Text>Project Page</Text>;
+    return (
+      <View>
+        {this.props.project.currentProject && (
+          <Text> {this.props.project.currentProject.title}</Text>
+        )}
+      </View>
+    );
   }
 }
 
-export default ProjectPage;
+function mapStateToProps(state) {
+  return {
+    project: state.project,
+  };
+}
+export default connect(mapStateToProps)(ProjectPage);

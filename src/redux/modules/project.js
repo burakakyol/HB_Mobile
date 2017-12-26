@@ -16,6 +16,7 @@ export const UPDATE = 'CREATE';
 export const SUCCESS = 'SUCCESS';
 export const GET_PROJECTS = 'GET_PROJECTS';
 export const ADD_MEMBER = 'ADD_MEMBER';
+export const SET_CURRENT_PROJECT = 'SET_CURRENT_PROJECT';
 
 // Action Creator Types
 
@@ -49,6 +50,11 @@ export type AddMemberAction = {
   type: typeof ADD_MEMBER,
 };
 
+export type setCurrentProjectAction = {
+  type: typeof SET_CURRENT_PROJECT,
+  project: Project,
+};
+
 // Action Creators
 export const create = (project: Project, status: any, message: any): CreateAction => ({
   type: CREATE,
@@ -66,6 +72,11 @@ export const addMember = (status: any, message: any): AddMemberAction => ({
   type: ADD_MEMBER,
   status,
   message,
+});
+
+export const setCurrentProject = (project: Project): setCurrentProjectAction => ({
+  type: SET_CURRENT_PROJECT,
+  project,
 });
 
 const request = (): RequestAction => ({
@@ -101,7 +112,8 @@ export type ProjectActions =
   | UpdateAction
   | FailedAction
   | GetProjectsAction
-  | AddMemberAction;
+  | AddMemberAction
+  | setCurrentProjectAction;
 
 // Reducer
 
@@ -114,7 +126,7 @@ export default function(state: ProjectState = defaultState, action: ProjectActio
 
     case CREATE:
       return {
-        currentProject: {},
+        currentProject: state.currentProject,
         projects: [...state.projects],
         status: action.message,
         message: action.status,
@@ -122,8 +134,15 @@ export default function(state: ProjectState = defaultState, action: ProjectActio
 
     case GET_PROJECTS:
       return {
-        currentProject: {},
+        currentProject: state.currentProject,
         projects: action.projects,
+        status: types.LOADED,
+      };
+
+    case SET_CURRENT_PROJECT:
+      return {
+        currentProject: action.project,
+        projects: state.projects,
         status: types.LOADED,
       };
 
