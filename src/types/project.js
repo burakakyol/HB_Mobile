@@ -22,5 +22,6 @@ export type ProjectUser = {
   user: User,
   isActive: boolean,
   joiningDate: string,
+  project: Project,
   role: PROJECT_MANAGER | PROJECT_MEMBER | PROJECT_OWNER,
 };
