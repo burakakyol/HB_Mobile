@@ -2,10 +2,11 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-
+import { bindActionCreators } from 'redux';
 import { Card, Button, FormLabel, FormInput } from 'react-native-elements';
 import { Container, Header, Tab, Tabs, TabHeading, Icon, Text, ScrollableTab } from 'native-base';
 import { type UserState } from '../../redux/modules/user';
+import { getProjectsThunk } from '../../redux/modules/project';
 import ProjectList from '../Projects/ProjectList';
 import Profile from '../Profile';
 import NewProject from '../Projects/NewProject';
@@ -13,10 +14,19 @@ import NewProject from '../Projects/NewProject';
 type Props = {
   user: UserState,
   navigation: any,
+  project: any,
+  getProjects: Function,
 };
 class Projects extends Component<Props, any> {
   constructor(props) {
     super(props);
+  }
+  componentWillMount() {
+    this.props.getProjects(this.props.user.user.id);
+  }
+
+  componentDidMount() {
+    console.log(this.props.project);
   }
   render() {
     return (
@@ -24,10 +34,10 @@ class Projects extends Component<Props, any> {
         <Header hasTabs />
         <Tabs renderTabBar={() => <ScrollableTab />}>
           <Tab heading="Projeler">
-            <ProjectList navigation={this.props.navigation} />
+            <ProjectList navigation={this.props.navigation} project={this.props.project} />
           </Tab>
           <Tab heading="Profil">
-            <Profile />
+            <Profile navigation={this.props.navigation} />
           </Tab>
           <Tab heading="Tab3">
             <NewProject />
@@ -37,10 +47,13 @@ class Projects extends Component<Props, any> {
     );
   }
 }
-
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ getProjects: getProjectsThunk }, dispatch);
+}
 function mapStateToProps(state) {
   return {
     user: state.currentUser,
+    project: state.project,
   };
 }
-export default connect(mapStateToProps)(Projects);
+export default connect(mapStateToProps, mapDispatchToProps)(Projects);
