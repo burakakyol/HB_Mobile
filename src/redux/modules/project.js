@@ -137,9 +137,11 @@ export default function(state: ProjectState = defaultState, action: ProjectActio
 
 // Thunk
 
-export const createProjectThunk = (title: string, description: string): Function => async (
-  dispatch: ReduxDispatch,
-): Promise<*> => {
+export const createProjectThunk = (
+  title: string,
+  description: string,
+  userId: number,
+): Function => async (dispatch: ReduxDispatch): Promise<*> => {
   try {
     request();
     // eslint-disable-next-line no-undef
@@ -165,7 +167,20 @@ export const createProjectThunk = (title: string, description: string): Function
       const status = json.status;
       const project = ProjectMapper.fromAPIResponse(json.project);
       // eslint-disable-next-line no-undef
-
+      const responseUser = await fetch(
+        `https://murmuring-eyrie-77138.herokuapp.com/project/${project.id}/members/add/`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            role: 0,
+          }),
+        },
+      );
       dispatch(create(project, message, status));
     }
   } catch (error) {
