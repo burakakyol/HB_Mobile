@@ -8,7 +8,7 @@ import { NavigationActions } from 'react-navigation';
 import { StyleSheet, View, ActivityIndicator, Button } from 'react-native';
 import ActionButton from 'react-native-action-button';
 import * as types from '../../enums/actionStatus';
-import { getProjectsThunk } from '../../redux/modules/project';
+import { getProjectsThunk, setCurrentProject } from '../../redux/modules/project';
 import ProjectItem from './ProjectItem';
 
 const styles = StyleSheet.create({
@@ -24,6 +24,7 @@ type Props = {
   project: any,
   user: any,
   getProjects: Function,
+  setCurrent: Function,
 };
 class ProjectList extends Component<Props, any> {
   static navigationOptions = ({ navigation }) => ({
@@ -32,13 +33,9 @@ class ProjectList extends Component<Props, any> {
 
   constructor(props) {
     super(props);
-    this.navigateProjectPage = this.navigateProjectPage.bind(this);
   }
   navigateNewProject() {
     this.props.navigation.navigate('NewProject');
-  }
-  navigateProjectPage() {
-    this.props.navigation.navigate('ProjectPage');
   }
 
   componentWillMount() {
@@ -68,7 +65,9 @@ class ProjectList extends Component<Props, any> {
                 <ProjectItem
                   key={project.id}
                   project={project.project}
-                  onClick={this.navigateProjectPage}
+                  test={this.props.project}
+                  navigation={this.props.navigation}
+                  currentProjectAction={this.props.setCurrent}
                 />
               ))}
             </Card>
@@ -88,7 +87,10 @@ class ProjectList extends Component<Props, any> {
   }
 }
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ getProjects: getProjectsThunk }, dispatch);
+  return bindActionCreators(
+    { getProjects: getProjectsThunk, setCurrent: setCurrentProject },
+    dispatch,
+  );
 }
 function mapStateToProps(state) {
   return {
