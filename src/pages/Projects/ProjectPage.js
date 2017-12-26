@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { View } from 'react-native';
-import { Card, Button, Text } from 'react-native-elements';
+import { Card, Button } from 'react-native-elements';
+import { ListItem, Text, Separator, Container, Header, Content } from 'native-base';
 import { connect } from 'react-redux';
 
 type Props = {
@@ -16,11 +17,25 @@ class ProjectPage extends Component {
   }
   render() {
     return (
-      <View>
-        {this.props.project.currentProject && (
-          <Text> {this.props.project.currentProject.title}</Text>
-        )}
-      </View>
+      <Container>
+        <Content>
+          <Separator bordered>
+            <Text>Proje Bilgileri</Text>
+          </Separator>
+          <ListItem>
+            {this.props.project.currentProject && (
+              <Text> {`Proje Adı:${this.props.project.currentProject.title}`}</Text>
+            )}
+          </ListItem>
+
+          <Separator bordered>
+            <Text>Süreçler</Text>
+          </Separator>
+          <ListItem>
+            <Text>Örnek Süreç</Text>
+          </ListItem>
+        </Content>
+      </Container>
     );
   }
 }
