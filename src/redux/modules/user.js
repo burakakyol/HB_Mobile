@@ -101,7 +101,7 @@ export default function(state: UserState = defaultState, action: UserActions): U
       return { user: null, status: types.FAILED, error: action.error };
 
     case LOGOUT:
-      return { user: null, status: types.LOADED };
+      return defaultState;
 
     case UPDATE:
       return { user: action.user, status: types.LOADED };

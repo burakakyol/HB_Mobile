@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { Container, Content, View, Text } from 'native-base';
 import { Image, ImageBackground, Alert, TextInput, ActivityIndicator } from 'react-native';
 import { FormLabel, FormInput, Button } from 'react-native-elements';
-
+import { NavigationActions } from 'react-navigation';
 import { loginThunk, login, type UserState } from '../../redux/modules/user';
 
 import styles from './styles';
@@ -43,11 +43,19 @@ class Login extends Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps){
-    if(nextProps.user.status===types.LOADED){
-      this.props.navigation.navigate('Dashboard');
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.user.status === types.LOADED) {
+      const resetAction = NavigationActions.navigate({
+        routeName: 'ProtectedRoute',
+
+        actions: [NavigationActions.navigate({ routeName: 'ProjectList' })],
+      });
+      this.props.navigation.dispatch(resetAction);
     }
 
+    if (this.props.user.error) {
+      Alert.alert(`Hata: ${this.props.user.user.error}`);
+    }
   }
 
   async getUserFromStorage() {
@@ -62,10 +70,6 @@ class Login extends Component<Props, State> {
       baseURL: 'https://murmuring-eyrie-77138.herokuapp.com',
     });
     const asd = '';
-    if (this.props.user.status === types.LOADED) {
-      Alert.alert(`Hoşgeldin ${this.props.user.user.userName}`);
-      
-    }
 
     return (
       <Container>

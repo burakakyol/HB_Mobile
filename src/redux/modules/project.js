@@ -137,27 +137,26 @@ export default function(state: ProjectState = defaultState, action: ProjectActio
 
 // Thunk
 
-export const createProjectThunk = (
-  title: string,
-  description: string,
-  endDate: string,
-  userId: number,
-): Function => async (dispatch: ReduxDispatch): Promise<*> => {
+export const createProjectThunk = (title: string, description: string): Function => async (
+  dispatch: ReduxDispatch,
+): Promise<*> => {
   try {
     request();
     // eslint-disable-next-line no-undef
-    const response = await fetch(`${API_ROOT_URL}/project/create_project/`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `https://murmuring-eyrie-77138.herokuapp.com/project/create_project/`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          description,
+        }),
       },
-      body: JSON.stringify({
-        title,
-        description,
-        endDate,
-      }),
-    });
+    );
     const json = await response.json();
     if (json.error) {
       dispatch(failure(json.error));
@@ -166,16 +165,7 @@ export const createProjectThunk = (
       const status = json.status;
       const project = ProjectMapper.fromAPIResponse(json.project);
       // eslint-disable-next-line no-undef
-      const responseUser = await fetch(`${API_ROOT_URL}/project/${project.id}/members/add/`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId,
-        }),
-      });
+
       dispatch(create(project, message, status));
     }
   } catch (error) {

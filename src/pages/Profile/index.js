@@ -1,17 +1,32 @@
 // @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { View } from 'react-native';
 import { Card, Button, Text } from 'react-native-elements';
+import { NavigationActions } from 'react-navigation';
+
+import { logout } from '../../redux/modules/user';
 
 type Props = {
   navigation: any,
   user: Object,
+  logoutUser: Function,
 };
 
-class Profile extends Component {
+class Profile extends Component<Props, any> {
   constructor(props) {
     super(props);
+    this.logoutAction = this.logoutAction.bind(this);
+  }
+  logoutAction() {
+    this.props.logoutUser();
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'AnonymousRoute' })],
+    });
+
+    this.props.navigation.dispatch(resetAction);
   }
 
   render() {
@@ -19,7 +34,7 @@ class Profile extends Component {
     console.log(user);
     return (
       <View style={{ paddingVertical: 20 }}>
-        <Card title={user ? `${user.user.firstName} ${user.user.lastName}` : ''}>
+        <Card title={user.user ? `${user.user.firstName} ${user.user.lastName}` : ''}>
           <View
             style={{
               backgroundColor: '#bcbec1',
@@ -36,7 +51,7 @@ class Profile extends Component {
               0,
             )}${user.user.lastName.charAt(0)}`}</Text>
           </View>
-          <Button backgroundColor="#03A9F4" title="SIGN OUT" />
+          <Button backgroundColor="#03A9F4" title="SIGN OUT" onPress={this.logoutAction} />
         </Card>
       </View>
     );
@@ -48,4 +63,8 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(Profile);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ logoutUser: logout }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);
