@@ -6,11 +6,13 @@ import { View } from 'react-native';
 import { Card, Button, Text } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
+import { createRootNavigator } from '../../router';
 import { logout } from '../../redux/modules/user';
 
 type Props = {
   navigation: any,
   user: Object,
+  project: Object,
   logoutUser: Function,
 };
 
@@ -30,8 +32,9 @@ class Profile extends Component<Props, any> {
   }
 
   render() {
-    const { user } = this.props;
-    console.log(user);
+    const { user, project } = this.props;
+    console.log('Kullanıcı', user);
+    console.log('Proje', project);
     return (
       <View style={{ paddingVertical: 20 }}>
         <Card title={user.user ? `${user.user.firstName} ${user.user.lastName}` : ''}>
@@ -60,6 +63,7 @@ class Profile extends Component<Props, any> {
 function mapStateToProps(state) {
   return {
     user: state.currentUser,
+    project: state.project,
   };
 }
 
