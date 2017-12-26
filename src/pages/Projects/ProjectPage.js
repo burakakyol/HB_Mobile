@@ -6,12 +6,14 @@ import { View } from 'react-native';
 import { Card, Button } from 'react-native-elements';
 import { ListItem, Text, Separator, Container, Header, Content } from 'native-base';
 import { connect } from 'react-redux';
+import { type Project } from '../../types/project';
 
 type Props = {
   navigation: any,
+  project: Project,
 };
 
-class ProjectPage extends Component {
+class ProjectPage extends Component<Props, any> {
   constructor(props) {
     super(props);
   }
@@ -25,6 +27,11 @@ class ProjectPage extends Component {
           <ListItem>
             {this.props.project.currentProject && (
               <Text> {`Proje Adı:${this.props.project.currentProject.title}`}</Text>
+            )}
+          </ListItem>
+          <ListItem>
+            {this.props.project.currentProject && (
+              <Text> {`Açıklama:${this.props.project.currentProject.description}`}</Text>
             )}
           </ListItem>
 
