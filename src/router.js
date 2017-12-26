@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import ProjectList from './pages/Projects/ProjectList';
 import NewProject from './pages/Projects/NewProject';
+import ProjectPage from './pages/Projects/ProjectPage';
 
 const headerStyle = {
   marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
@@ -38,6 +39,12 @@ export const ProjectRoute = StackNavigator({
     screen: NewProject,
     navigationOptions: {
       title: 'Yeni Proje',
+    },
+  },
+  ProjectPage: {
+    screen: ProjectPage,
+    navigationOptions: {
+      title: 'Proje',
     },
   },
 });
