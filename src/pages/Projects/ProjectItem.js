@@ -18,7 +18,7 @@ const ProjectItem = ({ project, navigation, currentProjectAction, test }: Props)
         console.log('basildi');
         navigation.navigate('ProjectPage');
         currentProjectAction(project);
-        console.log(project);
+        console.log(test);
       }}
     >
       <Icon active name="ios-archive" />
