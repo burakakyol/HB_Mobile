@@ -3,12 +3,13 @@ import { Container, Content, Card, CardItem, Icon, Text, Right, Button } from 'n
 
 import { PROJECT_MANAGER, PROJECT_MEMBER, PROJECT_OWNER } from '../../enums/projectRoles';
 
-const ProjectItem = ({ project }) => (
+const ProjectItem = ({ project, onClick }) => (
   <CardItem>
     <Button
       transparent
       onPress={() => {
         console.log('basildi');
+        onClick();
       }}
     >
       <Icon active name="ios-archive" />
