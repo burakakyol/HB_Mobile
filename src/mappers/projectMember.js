@@ -11,6 +11,7 @@ export const ProjectUserMapper = {
       joiningDate: response.joining_date,
       role: response.role,
       isActive: response.is_active,
+      project: response.project,
     };
   },
   fromAPIResponseMultiple(response: Array<Object> | null): Array<ProjectUser> {
