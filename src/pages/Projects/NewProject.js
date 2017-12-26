@@ -33,9 +33,9 @@ class NewProject extends Component<Props, State> {
   onSubmitEvent() {
     console.log('asd', this.props.user);
 
-    this.props.create(this.state.title, this.state.description);
+    this.props.create(this.state.title, this.state.description, this.props.user.user.id);
 
-    console.log('request-sonrası', this.props.user);
+    console.log('request-sonrası', this.props.project);
   }
 
   render() {
@@ -58,6 +58,9 @@ class NewProject extends Component<Props, State> {
 
             <Button title="Gönder" large onPress={this.onSubmitEvent} />
           </Card>
+          {this.props.project.status === types.LOADING && (
+            <ActivityIndicator size="large" color="#0000ff" />
+          )}
         </View>
       </Content>
     );
