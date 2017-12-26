@@ -6,6 +6,7 @@ import { type ReduxDispatch } from '../../types/redux';
 import * as types from '../../enums/actionStatus';
 import { UserMapper } from '../../mappers/user';
 import { ProjectMapper } from '../../mappers/project';
+import { ProjectUserMapper } from '../../mappers/projectMember';
 import UserStorage from '../../services/userStorage';
 // Actions
 export const REQUEST = 'REQUEST';
@@ -136,6 +137,30 @@ export default function(state: ProjectState = defaultState, action: ProjectActio
 }
 
 // Thunk
+
+export const getProjectsThunk = (userId: number): Function => async (
+  dispatch: ReduxDispatch,
+): Promise<*> => {
+  try {
+    request();
+    // eslint-disable-next-line no-undef
+    const response = await fetch(
+      `https://murmuring-eyrie-77138.herokuapp.com/user/${userId}/projects/`,
+      {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    const json = await response.json();
+    const projects = ProjectUserMapper.fromAPIResponseMultiple(json);
+    dispatch(getProjects(projects));
+  } catch (error) {
+    dispatch(failure(error));
+  }
+};
 
 export const createProjectThunk = (
   title: string,
