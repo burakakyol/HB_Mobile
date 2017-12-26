@@ -4,10 +4,9 @@ import API_ROOT_URL from '../../config';
 import { type Project, ProjectUser } from '../../types/project';
 import { type ReduxDispatch } from '../../types/redux';
 import * as types from '../../enums/actionStatus';
-import { UserMapper } from '../../mappers/user';
 import { ProjectMapper } from '../../mappers/project';
 import { ProjectUserMapper } from '../../mappers/projectMember';
-import UserStorage from '../../services/userStorage';
+
 // Actions
 export const REQUEST = 'REQUEST';
 export const FAILED = 'FAILED';
@@ -16,6 +15,7 @@ export const CREATE = 'CREATE';
 export const UPDATE = 'CREATE';
 export const SUCCESS = 'SUCCESS';
 export const GET_PROJECTS = 'GET_PROJECTS';
+export const ADD_MEMBER = 'ADD_MEMBER';
 
 // Action Creator Types
 
@@ -45,6 +45,10 @@ export type GetProjectsAction = {
   projects: Array<ProjectUser>,
 };
 
+export type AddMemberAction = {
+  type: typeof ADD_MEMBER,
+};
+
 // Action Creators
 export const create = (project: Project, status: any, message: any): CreateAction => ({
   type: CREATE,
@@ -56,6 +60,12 @@ export const create = (project: Project, status: any, message: any): CreateActio
 export const success = (project: Project): SuccessAction => ({
   type: SUCCESS,
   project,
+});
+
+export const addMember = (status: any, message: any): AddMemberAction => ({
+  type: ADD_MEMBER,
+  status,
+  message,
 });
 
 const request = (): RequestAction => ({
@@ -90,7 +100,8 @@ export type ProjectActions =
   | CreateAction
   | UpdateAction
   | FailedAction
-  | GetProjectsAction;
+  | GetProjectsAction
+  | AddMemberAction;
 
 // Reducer
 
@@ -116,6 +127,14 @@ export default function(state: ProjectState = defaultState, action: ProjectActio
         status: types.LOADED,
       };
 
+    case ADD_MEMBER:
+      return {
+        currentProject: state.currentProject,
+        projects: state.projects,
+        status: action.status,
+        message: action.message,
+      };
+
     case SUCCESS:
       return {
         currentProject: action.project,
@@ -137,6 +156,32 @@ export default function(state: ProjectState = defaultState, action: ProjectActio
 }
 
 // Thunk
+export const addMemberThunk = (projectId: number, userId: number, role: number): Function => async (
+  dispatch: ReduxDispatch,
+): Promise<*> => {
+  try {
+    request();
+    // eslint-disable-next-line no-undef
+    const response = await fetch(
+      `https://murmuring-eyrie-77138.herokuapp.com/project/${projectId}/members/add/`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          role,
+        }),
+      },
+    );
+    const json = await response.json();
+    dispatch(addMember(json.status, json.message));
+  } catch (error) {
+    dispatch(failure(error));
+  }
+};
 
 export const getProjectsThunk = (userId: number): Function => async (
   dispatch: ReduxDispatch,
@@ -144,7 +189,6 @@ export const getProjectsThunk = (userId: number): Function => async (
   try {
     request();
     // eslint-disable-next-line no-undef
-
     const response = await fetch(
       `https://murmuring-eyrie-77138.herokuapp.com/user/${userId}/projects/`,
       {
