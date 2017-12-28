@@ -8,6 +8,7 @@ import { NavigationActions } from 'react-navigation';
 
 import { createRootNavigator } from '../../router';
 import { logout } from '../../redux/modules/user';
+import { getRef } from '../../nav';
 
 type Props = {
   navigation: any,
@@ -24,19 +25,27 @@ class Profile extends Component<Props, any> {
   logoutAction() {
     this.props.logoutUser();
     const resetAction = NavigationActions.reset({
-      index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'AnonymousRoute' })],
+      index: 1,
+      key: null,
+      actions: [
+        NavigationActions.navigate({ routeName: 'AnonymousRoute', key: null }),
+        NavigationActions.navigate({ routeName: 'Login', key: null }),
+      ],
     });
 
     this.props.navigation.dispatch(resetAction);
   }
 
   render() {
-    const { user, project } = this.props;
-
     return (
       <View style={{ paddingVertical: 20 }}>
-        <Card title={user.user ? `${user.user.firstName} ${user.user.lastName}` : ''}>
+        <Card
+          title={
+            this.props.user.user !== {}
+              ? `${this.props.user.user.firstName} ${this.props.user.user.lastName}`
+              : ''
+          }
+        >
           <View
             style={{
               backgroundColor: '#bcbec1',
@@ -49,9 +58,15 @@ class Profile extends Component<Props, any> {
               marginBottom: 20,
             }}
           >
-            <Text style={{ color: 'white', fontSize: 28 }}>{`${user.user.firstName.charAt(
-              0,
-            )}${user.user.lastName.charAt(0)}`}</Text>
+            {this.props.user !== {} ? (
+              <Text
+                style={{ color: 'white', fontSize: 28 }}
+              >{`${this.props.user.user.firstName.charAt(0)}${this.props.user.user.lastName.charAt(
+                0,
+              )}`}</Text>
+            ) : (
+              ''
+            )}
           </View>
           <Button backgroundColor="#03A9F4" title="SIGN OUT" onPress={this.logoutAction} />
         </Card>
