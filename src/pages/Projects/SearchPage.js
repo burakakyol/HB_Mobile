@@ -7,12 +7,16 @@ import { connect } from 'react-redux';
 import { Card, FormLabel, FormInput, Text, Button } from 'react-native-elements';
 import { Content, List, ListItem, View, Body, Right } from 'native-base';
 import { searchThunk } from '../../redux/modules/search';
+import { addMemberThunk as addMember } from '../../redux/modules/project';
+import * as projectRoles from '../../enums/projectRoles';
 
 import * as types from '../../enums/actionStatus';
 
 type Props = {
   result: any,
   searchUser: Function,
+  project: any,
+  addMember: Function,
 };
 
 class SearchPage extends Component<Props, any> {
@@ -52,7 +56,20 @@ class SearchPage extends Component<Props, any> {
                     <Text>{user.userName}</Text>
                   </Body>
                   <Right>
-                    <Button title="+" />
+                    {this.props.project.currentProject.members.filter(
+                      member => member.user.id === user.id,
+                    ).length === 0 && (
+                      <Button
+                        title="+"
+                        onPress={() => {
+                          this.props.addMember(
+                            this.props.project.currentProject.id,
+                            user.id,
+                            projectRoles.PROJECT_MEMBER,
+                          );
+                        }}
+                      />
+                    )}
                   </Right>
                 </ListItem>
               ))}
@@ -67,12 +84,13 @@ class SearchPage extends Component<Props, any> {
 function mapStateToProps(state) {
   return {
     result: state.search,
+    project: state.project,
     user: state.currentUser,
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ searchUser: searchThunk }, dispatch);
+  return bindActionCreators({ searchUser: searchThunk, addMember }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchPage);
