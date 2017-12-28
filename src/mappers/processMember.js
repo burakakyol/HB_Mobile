@@ -14,11 +14,11 @@ export const ProcessUserMapper = {
       process: ProcessMapper.fromAPIResponse(response.process),
     };
   },
-  fromAPIResponseMultiple(response: Array<Object> | null): Array<ProjectUser> {
+  fromAPIResponseMultiple(response: Array<Object> | null): Array<ProcessUser> {
     if (!response) {
       return [];
     }
 
-    return response.map(ProjectUserMapper.fromAPIResponse);
+    return response.map(ProcessUserMapper.fromAPIResponse);
   },
 };
