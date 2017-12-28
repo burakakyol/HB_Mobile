@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { Card, FormLabel, FormInput, Text, Button } from 'react-native-elements';
 import { Content, List, ListItem, View, Body, Right } from 'native-base';
 import { searchThunk } from '../../redux/modules/search';
+
 import * as types from '../../enums/actionStatus';
 
 type Props = {

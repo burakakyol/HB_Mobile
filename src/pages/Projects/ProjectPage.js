@@ -2,15 +2,20 @@
 
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { View, Button } from 'react-native';
+import { View, Button, ActivityIndicator } from 'react-native';
 import { Card } from 'react-native-elements';
 import { ListItem, Text, Separator, Container, Header, Content } from 'native-base';
 import { connect } from 'react-redux';
 import { type Project } from '../../types/project';
+import { type Process } from '../../types/process';
+import { getProcessesThunk as getProcesses } from '../../redux/modules/process';
+import * as types from '../../enums/actionStatus';
 
 type Props = {
   navigation: any,
   project: Project,
+  process: Process,
+  getProcesses: Function,
 };
 
 class ProjectPage extends Component<Props, any> {
@@ -19,6 +24,15 @@ class ProjectPage extends Component<Props, any> {
   });
   constructor(props) {
     super(props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.project.currentProject) {
+      this.props.getProcesses(nextProps.project.currentProject.id);
+    }
+  }
+  componentDidMount() {
+    this.props.getProcesses(4);
   }
   render() {
     return (
@@ -41,18 +55,29 @@ class ProjectPage extends Component<Props, any> {
           <Separator bordered>
             <Text>Süreçler</Text>
           </Separator>
-          <ListItem>
-            <Text>Örnek Süreç</Text>
-          </ListItem>
+          {this.props.process.status === types.LOADING && (
+            <ActivityIndicator size="large" color="#0000ff" />
+          )}
+          {this.props.process
+            ? this.props.process.processList.map(process => (
+                <ListItem key={process.id}>
+                  <Text>{process.title}</Text>
+                </ListItem>
+              ))
+            : ''}
         </Content>
       </Container>
     );
   }
 }
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ getProcesses }, dispatch);
+}
 
 function mapStateToProps(state) {
   return {
     project: state.project,
+    process: state.process,
   };
 }
-export default connect(mapStateToProps)(ProjectPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectPage);

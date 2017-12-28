@@ -25,12 +25,9 @@ class Profile extends Component<Props, any> {
   logoutAction() {
     this.props.logoutUser();
     const resetAction = NavigationActions.reset({
-      index: 1,
+      index: 0,
       key: null,
-      actions: [
-        NavigationActions.navigate({ routeName: 'AnonymousRoute', key: null }),
-        NavigationActions.navigate({ routeName: 'Login', key: null }),
-      ],
+      actions: [NavigationActions.navigate({ routeName: 'AnonymousRoute', key: null })],
     });
 
     this.props.navigation.dispatch(resetAction);
