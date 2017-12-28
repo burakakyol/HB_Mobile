@@ -20,7 +20,7 @@ export type RequestAction = {
   type: typeof REQUEST,
 };
 export type RegisterAction = {
-  type: REGISTER,
+  type: typeof REGISTER,
 };
 
 export type FailureAction = {
@@ -75,6 +75,7 @@ export type UserState = {
   user: any,
   status: any,
   error?: any,
+  results?: any,
 };
 
 export type UserActions =
@@ -98,7 +99,7 @@ export default function(state: UserState = defaultState, action: UserActions): U
       return { user: action.user, status: types.LOADED };
 
     case FAILED:
-      return { user: null, status: types.FAILED, error: action.error };
+      return { user: state.user, status: types.FAILED, error: action.error };
 
     case LOGOUT:
       return defaultState;

@@ -10,6 +10,7 @@ import Profile from './pages/Profile';
 import ProjectList from './pages/Projects/ProjectList';
 import NewProject from './pages/Projects/NewProject';
 import ProjectPage from './pages/Projects/ProjectPage';
+import SearchPage from './pages/Projects/SearchPage';
 
 const headerStyle = {
   marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
@@ -45,6 +46,12 @@ export const ProjectRoute = StackNavigator({
     screen: ProjectPage,
     navigationOptions: {
       title: 'Proje',
+    },
+  },
+  SearchPage: {
+    screen: SearchPage,
+    navigationOptions: {
+      title: 'Üye Ekle',
     },
   },
 });

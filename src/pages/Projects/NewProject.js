@@ -31,11 +31,8 @@ class NewProject extends Component<Props, State> {
   }
 
   onSubmitEvent() {
-    console.log('asd', this.props.user);
-
     this.props.create(this.state.title, this.state.description, this.props.user.user.id);
 
-    console.log('request-sonrası', this.props.project);
     Alert.alert('Proje başarıyla eklendi');
   }
 

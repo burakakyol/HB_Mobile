@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { View } from 'react-native';
-import { Card, Button } from 'react-native-elements';
+import { View, Button } from 'react-native';
+import { Card } from 'react-native-elements';
 import { ListItem, Text, Separator, Container, Header, Content } from 'native-base';
 import { connect } from 'react-redux';
 import { type Project } from '../../types/project';
@@ -14,6 +14,9 @@ type Props = {
 };
 
 class ProjectPage extends Component<Props, any> {
+  static navigationOptions = ({ navigation }) => ({
+    headerRight: <Button title="Kişi Ekle" onPress={() => navigation.navigate('SearchPage')} />,
+  });
   constructor(props) {
     super(props);
   }

@@ -5,13 +5,18 @@ import { Provider } from 'react-redux';
 import { StyleSheet, Text, View } from 'react-native';
 import { createRootNavigator } from './src/router';
 import store from './src/redux/configureStore';
+import { init } from './src/nav';
 
 class App extends React.Component {
   render() {
     const Layout = createRootNavigator();
     return (
       <Provider store={store}>
-        <Layout />
+        <Layout
+          ref={nav => {
+            init(nav);
+          }}
+        />
       </Provider>
     );
   }

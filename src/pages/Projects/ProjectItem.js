@@ -15,10 +15,8 @@ const ProjectItem = ({ project, navigation, currentProjectAction, test }: Props)
     <Button
       transparent
       onPress={() => {
-        console.log('basildi');
         navigation.navigate('ProjectPage');
         currentProjectAction(project);
-        console.log(test);
       }}
     >
       <Icon active name="ios-archive" />

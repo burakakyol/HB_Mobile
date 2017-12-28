@@ -49,7 +49,9 @@ class ProjectList extends Component<Props, any> {
   }
   componentWillReceiveProps(nextProps) {
     if (nextProps.project.projects.length === this.props.project.projects.length) {
-      this.props.getProjects(this.props.user.user.id);
+      if (this.props.user.user) {
+        this.props.getProjects(this.props.user.user.id);
+      }
     }
   }
   render() {
