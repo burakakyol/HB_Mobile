@@ -7,9 +7,9 @@ import { ProcessMapper } from '../../mappers/process';
 import { ProcessUserMapper } from '../../mappers/processMember';
 
 // Actions
-export const REQUEST = 'REQUEST';
+export const PROCESS_REQUEST = 'PROCESS_REQUEST';
 export const FAILED = 'FAILED';
-export const LOADING = 'LOADING';
+
 export const GET_PROCESSES = 'GET_PROCESSES';
 export const SET_CURRENT_PROCESS = 'SET_CURRENT_PROCESS';
 export const CLEAR_PROCESSES = 'CLEAR_PROCESSES';
@@ -17,7 +17,7 @@ export const CLEAR_PROCESSES = 'CLEAR_PROCESSES';
 // Action Creator Types
 
 export type ProcessRequestAction = {
-  type: typeof REQUEST,
+  type: typeof PROCESS_REQUEST,
 };
 export type ProcessFailedAction = {
   type: typeof FAILED,
@@ -38,7 +38,7 @@ export type SetCurrentProcessAction = {
 
 // Action Creators
 const processRequest = (): ProcessRequestAction => ({
-  type: REQUEST,
+  type: PROCESS_REQUEST,
 });
 
 const processFailure = (error: any): ProcessFailedAction => ({
@@ -56,7 +56,7 @@ export const setCurrentProcess = (process: Process): SetCurrentProcessAction => 
   process,
 });
 
-const clearProcesses = (): ClearProcessesAction => ({
+export const clearProcesses = (): ClearProcessesAction => ({
   type: CLEAR_PROCESSES,
 });
 
@@ -71,7 +71,8 @@ export type ProcessActions =
   | ProcessRequestAction
   | ProcessFailedAction
   | GetProcessesAction
-  | SetCurrentProcessAction;
+  | SetCurrentProcessAction
+  | ClearProcessesAction;
 
 // Reducer
 
@@ -83,8 +84,8 @@ const defaultState = {
 
 export default function(state: ProcessState = defaultState, action: ProcessActions): ProcessState {
   switch (action.type) {
-    case REQUEST:
-      return { processList: [], currentProcess: {}, status: types.LOADING };
+    case PROCESS_REQUEST:
+      return { ...state, status: types.LOADING };
 
     case GET_PROCESSES:
       return {
@@ -119,7 +120,7 @@ export const getProcessesThunk = (projectId: number): Function => async (
   dispatch: ReduxDispatch,
 ): Promise<*> => {
   try {
-    processRequest();
+    dispatch(processRequest());
     // eslint-disable-next-line no-undef
     const response = await fetch(
       `https://murmuring-eyrie-77138.herokuapp.com/project/${projectId}/process/all/`,
@@ -133,9 +134,9 @@ export const getProcessesThunk = (projectId: number): Function => async (
     );
 
     const json = await response.json();
-    console.log('processjson', json);
+
     const processes = ProcessMapper.fromAPIResponseMultiple(json.processes);
-    console.log('processmap', processes);
+
     dispatch(getProcesses(processes));
   } catch (error) {
     dispatch(processFailure(error));

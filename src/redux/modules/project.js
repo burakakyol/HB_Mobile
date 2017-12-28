@@ -164,6 +164,8 @@ export default function(state: ProjectState = defaultState, action: ProjectActio
         projects: state.projects,
         status: types.LOADED,
       };
+    case CLEAR_CURRENT_PROJECT:
+      return defaultState;
 
     case ADD_MEMBER:
       return {
@@ -232,7 +234,6 @@ export const addMemberThunk = (projectId: number, userId: number, role: number):
 export const getProjectMembersThunk = (projectId: number): Function => async (
   dispatch: ReduxDispatch,
 ): Promise<*> => {
-  clearCurrentProject();
   try {
     request();
     // eslint-disable-next-line no-undef

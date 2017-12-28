@@ -8,8 +8,11 @@ import { ListItem, Text, Separator, Container, Header, Content } from 'native-ba
 import { connect } from 'react-redux';
 import { type Project } from '../../types/project';
 import { type Process } from '../../types/process';
-import { getProcessesThunk as getProcesses } from '../../redux/modules/process';
-import { getProjectMembersThunk as getMembers } from '../../redux/modules/project';
+import { getProcessesThunk as getProcesses, clearProcesses } from '../../redux/modules/process';
+import {
+  getProjectMembersThunk as getMembers,
+  clearCurrentProject as clearProject,
+} from '../../redux/modules/project';
 import * as types from '../../enums/actionStatus';
 
 type Props = {
@@ -18,6 +21,8 @@ type Props = {
   process: Process,
   getProcesses: Function,
   getMembers: Function,
+  clearProject: Function,
+  clearProcesses: Function,
 };
 
 class ProjectPage extends Component<Props, any> {
@@ -29,18 +34,18 @@ class ProjectPage extends Component<Props, any> {
   }
 
   componentWillMount() {
+    console.log('will mount');
     if (this.props.project.currentProject) {
       this.props.getProcesses(this.props.project.currentProject.id);
       this.props.getMembers(this.props.project.currentProject.id);
     }
   }
-  componentWillReceiveProps(nextProps) {
-    if (this.props.project.currentProject !== nextProps.project.currentProject) {
-      this.props.getProcesses(nextProps.project.currentProject.id);
-      this.props.getMembers(nextProps.project.currentProject.id);
-    }
-  }
 
+  componentWillUnmount() {
+    console.log('will unmount');
+    this.props.clearProject();
+    this.props.clearProcesses();
+  }
   render() {
     return (
       <Container>
@@ -92,7 +97,7 @@ class ProjectPage extends Component<Props, any> {
   }
 }
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ getProcesses, getMembers }, dispatch);
+  return bindActionCreators({ getProcesses, getMembers, clearProject, clearProcesses }, dispatch);
 }
 
 function mapStateToProps(state) {

@@ -27,15 +27,8 @@ class SearchPage extends Component<Props, any> {
     this.setState({ query: val });
 
     this.props.searchUser(val);
+  }
 
-    console.log('Prop result:', this.props.result);
-    console.log('prop user', this.props.user);
-  }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.result.status === 'LOADED') {
-      console.log(nextProps.result);
-    }
-  }
   render() {
     return (
       <Content>
