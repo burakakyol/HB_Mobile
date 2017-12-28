@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { type Project } from '../../types/project';
 import { type Process } from '../../types/process';
 import { getProcessesThunk as getProcesses } from '../../redux/modules/process';
+import { getProjectMembersThunk as getMembers } from '../../redux/modules/project';
 import * as types from '../../enums/actionStatus';
 
 type Props = {
@@ -16,6 +17,7 @@ type Props = {
   project: Project,
   process: Process,
   getProcesses: Function,
+  getMembers: Function,
 };
 
 class ProjectPage extends Component<Props, any> {
@@ -26,14 +28,19 @@ class ProjectPage extends Component<Props, any> {
     super(props);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.project.currentProject) {
-      this.props.getProcesses(nextProps.project.currentProject.id);
+  componentWillMount() {
+    if (this.props.project.currentProject) {
+      this.props.getProcesses(this.props.project.currentProject.id);
+      this.props.getMembers(this.props.project.currentProject.id);
     }
   }
-  componentDidMount() {
-    this.props.getProcesses(4);
+  componentWillReceiveProps(nextProps) {
+    if (this.props.project.currentProject !== nextProps.project.currentProject) {
+      this.props.getProcesses(nextProps.project.currentProject.id);
+      this.props.getMembers(nextProps.project.currentProject.id);
+    }
   }
+
   render() {
     return (
       <Container>
@@ -65,13 +72,27 @@ class ProjectPage extends Component<Props, any> {
                 </ListItem>
               ))
             : ''}
+          <Separator bordered>
+            <Text>Üyeler</Text>
+          </Separator>
+          {this.props.project.status === types.LOADING && (
+            <ActivityIndicator size="large" color="#0000ff" />
+          )}
+          {this.props.project
+            ? this.props.project.currentProject.members.map(user => (
+                <ListItem key={user.id}>
+                  <Text>{user.user.userName}-</Text>
+                  <Text>{user.role === 0 ? 'Proje Kurucusu' : 'Proje Üyesi'}</Text>
+                </ListItem>
+              ))
+            : ''}
         </Content>
       </Container>
     );
   }
 }
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ getProcesses }, dispatch);
+  return bindActionCreators({ getProcesses, getMembers }, dispatch);
 }
 
 function mapStateToProps(state) {

@@ -56,7 +56,7 @@ export const setCurrentProcess = (process: Process): SetCurrentProcessAction => 
   process,
 });
 
-const clear = (): ClearProcessesAction => ({
+const clearProcesses = (): ClearProcessesAction => ({
   type: CLEAR_PROCESSES,
 });
 
@@ -99,7 +99,8 @@ export default function(state: ProcessState = defaultState, action: ProcessActio
         processList: state.processList,
         status: types.LOADED,
       };
-
+    case CLEAR_PROCESSES:
+      return defaultState;
     case FAILED:
       return {
         currentProcess: null,

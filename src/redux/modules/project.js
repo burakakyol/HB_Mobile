@@ -1,7 +1,7 @@
 // @flow
 
 import API_ROOT_URL from '../../config';
-import { type Project, ProjectUser } from '../../types/project';
+import { type Project, type ProjectUser } from '../../types/project';
 import { type ReduxDispatch } from '../../types/redux';
 import * as types from '../../enums/actionStatus';
 import { ProjectMapper } from '../../mappers/project';
@@ -16,7 +16,9 @@ export const UPDATE = 'CREATE';
 export const SUCCESS = 'SUCCESS';
 export const GET_PROJECTS = 'GET_PROJECTS';
 export const ADD_MEMBER = 'ADD_MEMBER';
+export const GET_PROJECT_MEMBERS = 'GET_PROJECT_MEMBERS';
 export const SET_CURRENT_PROJECT = 'SET_CURRENT_PROJECT';
+export const CLEAR_CURRENT_PROJECT = 'CLEAR_CURRENT_PROJECT';
 
 // Action Creator Types
 
@@ -46,8 +48,16 @@ export type GetProjectsAction = {
   projects: Array<ProjectUser>,
 };
 
+export type GetProjectMembersAction = {
+  type: typeof GET_PROJECT_MEMBERS,
+  members: Array<ProjectUser>,
+};
+
 export type AddMemberAction = {
   type: typeof ADD_MEMBER,
+};
+export type clearCurrentProjectAction = {
+  type: typeof CLEAR_CURRENT_PROJECT,
 };
 
 export type setCurrentProjectAction = {
@@ -74,9 +84,17 @@ export const addMember = (status: any, message: any): AddMemberAction => ({
   message,
 });
 
+export const getProjectMembers = (members: Array<ProjectUser>): GetProjectMembersAction => ({
+  type: GET_PROJECT_MEMBERS,
+  members,
+});
 export const setCurrentProject = (project: Project): setCurrentProjectAction => ({
   type: SET_CURRENT_PROJECT,
   project,
+});
+
+export const clearCurrentProject = (): clearCurrentProjectAction => ({
+  type: CLEAR_CURRENT_PROJECT,
 });
 
 const request = (): RequestAction => ({
@@ -113,7 +131,8 @@ export type ProjectActions =
   | FailedAction
   | GetProjectsAction
   | AddMemberAction
-  | setCurrentProjectAction;
+  | setCurrentProjectAction
+  | getProjectMembers;
 
 // Reducer
 
@@ -152,6 +171,14 @@ export default function(state: ProjectState = defaultState, action: ProjectActio
         projects: state.projects,
         status: action.status,
         message: action.message,
+      };
+
+    case GET_PROJECT_MEMBERS:
+      return {
+        currentProject: { ...state.currentProject, members: action.members },
+        projects: state.projects,
+        status: types.LOADED,
+        message: state.message,
       };
 
     case SUCCESS:
@@ -197,6 +224,32 @@ export const addMemberThunk = (projectId: number, userId: number, role: number):
     );
     const json = await response.json();
     dispatch(addMember(json.status, json.message));
+  } catch (error) {
+    dispatch(failure(error));
+  }
+};
+
+export const getProjectMembersThunk = (projectId: number): Function => async (
+  dispatch: ReduxDispatch,
+): Promise<*> => {
+  clearCurrentProject();
+  try {
+    request();
+    // eslint-disable-next-line no-undef
+    const response = await fetch(
+      `https://murmuring-eyrie-77138.herokuapp.com/project/${projectId}/members/`,
+      {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
+    const json = await response.json();
+    const members = ProjectUserMapper.fromAPIResponseMultiple(json.members);
+    dispatch(getProjectMembers(members));
   } catch (error) {
     dispatch(failure(error));
   }
