@@ -11,7 +11,6 @@ export const ProcessUserMapper = {
       user: ProjectUserMapper.fromAPIResponse(response.user),
       role: response.role,
       isActive: response.is_active,
-      process: ProcessMapper.fromAPIResponse(response.process),
     };
   },
   fromAPIResponseMultiple(response: Array<Object> | null): Array<ProcessUser> {
