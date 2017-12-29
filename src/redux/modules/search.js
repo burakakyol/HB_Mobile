@@ -72,11 +72,7 @@ export default function(state: SearchState = defaultState, action: SearchActions
       };
 
     case CLEAR:
-      return {
-        results: [],
-        error: state.error,
-        status: types.LOADED,
-      };
+    return defaultState;
     case SEARCH:
       return { results: action.users, error: null, status: types.LOADED };
 

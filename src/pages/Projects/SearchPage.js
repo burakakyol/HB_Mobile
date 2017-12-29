@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Card, FormLabel, FormInput, Text, Button } from 'react-native-elements';
 import { Content, List, ListItem, View, Body, Right } from 'native-base';
-import { searchThunk } from '../../redux/modules/search';
+import { searchThunk, clear } from '../../redux/modules/search';
 import { addMemberThunk as addMember } from '../../redux/modules/project';
 import * as projectRoles from '../../enums/projectRoles';
 
@@ -17,6 +17,7 @@ type Props = {
   searchUser: Function,
   project: any,
   addMember: Function,
+  clearResults: Function,
 };
 
 class SearchPage extends Component<Props, any> {
@@ -33,6 +34,9 @@ class SearchPage extends Component<Props, any> {
     this.props.searchUser(val);
   }
 
+  componentWillUnmount() {
+    this.props.clearResults();
+  }
   render() {
     return (
       <Content>
@@ -90,7 +94,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ searchUser: searchThunk, addMember }, dispatch);
+  return bindActionCreators({ searchUser: searchThunk, addMember, clearResults: clear }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchPage);
