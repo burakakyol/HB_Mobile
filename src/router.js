@@ -12,6 +12,8 @@ import NewProject from './pages/Projects/NewProject';
 import ProjectPage from './pages/Projects/ProjectPage';
 import SearchPage from './pages/Projects/SearchPage';
 
+import ProcessPage from './pages/Process/ProcessPage';
+
 const headerStyle = {
   marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
 };
@@ -53,6 +55,9 @@ export const ProjectRoute = StackNavigator({
     navigationOptions: {
       title: 'Üye Ekle',
     },
+  },
+  ProcessPage: {
+    screen: ProcessPage,
   },
 });
 
