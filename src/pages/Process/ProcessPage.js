@@ -7,12 +7,14 @@ import { View, Button, ActivityIndicator } from 'react-native';
 import { Card } from 'react-native-elements';
 import { ListItem, Text, Separator, Container, Header, Content } from 'native-base';
 import { getProcessMembersThunk as getMembers } from '../../redux/modules/process';
+import { getProcessTasksThunk as getTasks } from '../../redux/modules/task';
 import * as types from '../../enums/actionStatus';
 
 type Props = {
   navigation: any,
   process: any,
   getMembers: Function,
+  getTasks: Function,
 };
 
 class ProcessPage extends Component<Props, any> {
@@ -25,6 +27,7 @@ class ProcessPage extends Component<Props, any> {
 
   componentWillMount() {
     this.props.getMembers(this.props.process.currentProcess.id);
+    this.props.getTasks(this.props.process.currentProcess.id);
   }
   componentDidMount() {
     console.log(this.props.process);
@@ -49,7 +52,16 @@ class ProcessPage extends Component<Props, any> {
           <Separator bordered>
             <Text>Görevler</Text>
           </Separator>
-
+          {this.props.task.status === types.LOADING && (
+            <ActivityIndicator size="large" color="#0000ff" />
+          )}
+          {this.props.task
+            ? this.props.task.taskList.map(task => (
+                <ListItem key={task.id}>
+                  <Text>{task.title}</Text>
+                </ListItem>
+              ))
+            : ''}
           <Separator bordered>
             <Text>Üyeler</Text>
           </Separator>
@@ -73,10 +85,11 @@ class ProcessPage extends Component<Props, any> {
 function mapStateToProps(state) {
   return {
     process: state.process,
+    task: state.task,
   };
 }
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ getMembers }, dispatch);
+  return bindActionCreators({ getMembers, getTasks }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProcessPage);
