@@ -116,27 +116,29 @@ export default function(state: TaskState = defaultState, action: TaskActions): T
 
 // thunk
 export const getProcessTasksThunk = (processId: number): Function => async (
-    dispatch: ReduxDispatch,
-  ): Promise<*> => {
-    try {
-      dispatch(taskRequest());
-      // eslint-disable-next-line no-undef
-      const response = await fetch(
-        `https://murmuring-eyrie-77138.herokuapp.com/process/${processId}/tasks/`,
-        {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
+  dispatch: ReduxDispatch,
+): Promise<*> => {
+  try {
+    dispatch(taskRequest());
+    // eslint-disable-next-line no-undef
+    const response = await fetch(
+      `https://murmuring-eyrie-77138.herokuapp.com/process/${processId}/tasks/`,
+      {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
-      );
-  
-      const json = await response.json();
-      const tasks = TaskMapper.fromAPIResponseMultiple(json.tasks);
-      console.log(tasks);
-      dispatch(getTasks(tasks));
-    } catch (error) {
-      dispatch(taskFailure(error));
-    }
-  };
+      },
+    );
+
+    const json = await response.json();
+    console.log(json);
+    const tasks = TaskMapper.fromAPIResponseMultiple(json.tasks);
+    console.log('task', tasks);
+    dispatch(getTasks(tasks));
+  } catch (error) {
+    console.log('fail');
+    dispatch(taskFailure(error));
+  }
+};
