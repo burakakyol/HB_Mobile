@@ -18,4 +18,11 @@ export const TaskMapper = {
       member: TaskUserMapper.fromAPIResponse(response),
     };
   },
+  fromAPIResponseMultiple(response: Array<Object> | null): Array<Task> {
+    if (!response) {
+      return [];
+    }
+
+    return response.map(TaskMapper.fromAPIResponse);
+  },
 };
