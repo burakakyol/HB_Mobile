@@ -10,12 +10,12 @@ export const TaskMapper = {
       title: response.title,
       description: response.description,
       startDate: response.start_date,
-      endDate: response.end_date,
+
       isCompleted: response.is_completed,
       isActive: response.is_active,
       progress: response.progress,
       manager: {},
-      member: TaskUserMapper.fromAPIResponse(response),
+      member: {},
     };
   },
   fromAPIResponseMultiple(response: Array<Object> | null): Array<Task> {
