@@ -13,6 +13,7 @@ import ProjectPage from './pages/Projects/ProjectPage';
 import SearchPage from './pages/Projects/SearchPage';
 
 import ProcessPage from './pages/Process/ProcessPage';
+import MemberAddPage from './pages/Process/MemberAddPage';
 
 const headerStyle = {
   marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
@@ -58,6 +59,9 @@ export const ProjectRoute = StackNavigator({
   },
   ProcessPage: {
     screen: ProcessPage,
+  },
+  MemberAddPage: {
+    screen: MemberAddPage,
   },
 });
 

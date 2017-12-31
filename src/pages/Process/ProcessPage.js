@@ -19,7 +19,7 @@ type Props = {
 
 class ProcessPage extends Component<Props, any> {
   static navigationOptions = ({ navigation }) => ({
-    headerRight: <Button title="Kişi Ekle" onPress={() => navigation.navigate('SearchPage')} />,
+    headerRight: <Button title="Kişi Ekle" onPress={() => navigation.navigate('MemberAddPage')} />,
   });
   constructor(props) {
     super(props);
