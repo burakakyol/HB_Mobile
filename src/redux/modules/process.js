@@ -14,6 +14,7 @@ export const GET_PROCESSES = 'GET_PROCESSES';
 export const SET_CURRENT_PROCESS = 'SET_CURRENT_PROCESS';
 export const CLEAR_PROCESSES = 'CLEAR_PROCESSES';
 export const GET_PROCESS_MEMBERS = 'GET_PROCESS_MEMBERS';
+export const ADD_PROCESS_MEMBER = 'ADD_PROCESS_MEMBER';
 
 // Action Creator Types
 
@@ -42,6 +43,12 @@ export type SetCurrentProcessAction = {
   type: typeof SET_CURRENT_PROCESS,
 };
 
+export type AddProcessMemberAction = {
+  type: typeof ADD_PROCESS_MEMBER,
+  message: any,
+  status: any,
+};
+
 // Action Creators
 const processRequest = (): ProcessRequestAction => ({
   type: PROCESS_REQUEST,
@@ -67,6 +74,12 @@ export const setCurrentProcess = (process: Process): SetCurrentProcessAction => 
   process,
 });
 
+export const addProcessMember = (status: any, message: any): AddProcessMemberAction => ({
+  type: ADD_PROCESS_MEMBER,
+  status,
+  message,
+});
+
 export const clearProcesses = (): ClearProcessesAction => ({
   type: CLEAR_PROCESSES,
 });
@@ -84,7 +97,8 @@ export type ProcessActions =
   | GetProcessesAction
   | SetCurrentProcessAction
   | ClearProcessesAction
-  | GetProcessMembersAction;
+  | GetProcessMembersAction
+  | AddProcessMemberAction;
 
 // Reducer
 
@@ -105,7 +119,12 @@ export default function(state: ProcessState = defaultState, action: ProcessActio
         processList: action.processes,
         status: types.LOADED,
       };
-
+    case ADD_PROCESS_MEMBER:
+      return {
+        ...state,
+        status: action.status,
+        message: action.message,
+      };
     case SET_CURRENT_PROCESS:
       return {
         currentProcess: action.process,
@@ -134,6 +153,35 @@ export default function(state: ProcessState = defaultState, action: ProcessActio
 }
 
 // thunk
+
+export const addProcessMemberThunk = (
+  processId: number,
+  projectUserId: number,
+  role: number,
+): Function => async (dispatch: ReduxDispatch): Promise<*> => {
+  try {
+    processRequest();
+    // eslint-disable-next-line no-undef
+    const response = await fetch(
+      `https://murmuring-eyrie-77138.herokuapp.com/process/${processId}/members/add/`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: projectUserId,
+          role,
+        }),
+      },
+    );
+    const json = await response.json();
+    dispatch(addProcessMember(json.status, json.message));
+  } catch (error) {
+    dispatch(processFailure(error));
+  }
+};
 
 export const getProcessMembersThunk = (processId: number): Function => async (
   dispatch: ReduxDispatch,

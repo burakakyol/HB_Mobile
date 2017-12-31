@@ -33,7 +33,6 @@ type Props = {
 };
 
 class ProjectPage extends Component<Props, any> {
- 
   static navigationOptions = ({ navigation }) => ({
     headerRight: <Button title="Kişi Ekle" onPress={() => navigation.navigate('SearchPage')} />,
   });
@@ -80,7 +79,11 @@ class ProjectPage extends Component<Props, any> {
           </ListItem>
 
           <Separator bordered>
-            <Text>Süreçler</Text>
+            <Text>
+              Süreçler
+                
+            
+            </Text>
           </Separator>
           {this.props.process.status === types.LOADING && (
             <ActivityIndicator size="large" color="#0000ff" />
