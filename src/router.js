@@ -14,6 +14,9 @@ import SearchPage from './pages/Projects/SearchPage';
 
 import ProcessPage from './pages/Process/ProcessPage';
 import MemberAddPage from './pages/Process/MemberAddPage';
+import NewProcess from './pages/Process/NewProcess';
+
+import NewTask from './pages/Task/NewTask';
 
 const headerStyle = {
   marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
@@ -62,6 +65,18 @@ export const ProjectRoute = StackNavigator({
   },
   MemberAddPage: {
     screen: MemberAddPage,
+  },
+  NewProcess: {
+    screen: NewProcess,
+    navigationOptions: {
+      title: 'Yeni Süreç',
+    },
+  },
+  NewTask: {
+    screen: NewTask,
+    navigationOptions: {
+      title: 'Yeni Görev',
+    },
   },
 });
 

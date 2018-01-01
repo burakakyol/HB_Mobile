@@ -3,7 +3,14 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { View, Button, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Button,
+  ActivityIndicator,
+  TouchableOpacity,
+  TouchableHighlight,
+  Alert,
+} from 'react-native';
 import { Card } from 'react-native-elements';
 import { ListItem, Text, Separator, Container, Header, Content } from 'native-base';
 import { getProcessMembersThunk as getMembers } from '../../redux/modules/process';
@@ -50,11 +57,21 @@ class ProcessPage extends Component<Props, any> {
             )}
           </ListItem>
           <Separator bordered>
-            <Text>Görevler</Text>
+            <Text>
+              Görevler
+              <Text
+                onPress={() => {
+                  this.props.navigation.navigate('NewTask');
+                }}
+              >
+               EKLE
+              </Text>
+            </Text>
           </Separator>
           {this.props.task.status === types.LOADING && (
             <ActivityIndicator size="large" color="#0000ff" />
           )}
+
           {this.props.task
             ? this.props.task.taskList.map(task => (
                 <ListItem key={task.id}>
@@ -72,7 +89,8 @@ class ProcessPage extends Component<Props, any> {
           {this.props.process
             ? this.props.process.currentProcess.members.map(data => (
                 <ListItem key={data.id}>
-                  <Text>{data.user.user.userName}</Text>
+                  <Text>{data.user.user.userName}-</Text>
+                  <Text>{data.user.role === 0 ? 'Süreç Sorumlusu' : 'Üye'}</Text>
                 </ListItem>
               ))
             : ''}

@@ -9,6 +9,7 @@ import { TaskUserMapper } from '../../mappers/taskUser';
 // Actions
 export const TASK_REQUEST = 'TASK_REQUEST';
 export const TASK_FAILED = 'TASK_FAILED';
+export const CREATE_TASK = 'CREATE_TASK';
 
 export const GET_TASKS = 'GET_TASKS';
 export const SET_CURRENT_TASK = 'SET_CURRENT_TASK';
@@ -32,6 +33,11 @@ export type ClearTasksAction = {
   type: typeof CLEAR_TASKS,
 };
 
+export type CreateTaskAction = {
+  type: typeof CREATE_TASK,
+  message: any,
+  status: any,
+};
 export type SetCurrentTaskAction = {
   type: typeof SET_CURRENT_TASK,
 };
@@ -60,6 +66,12 @@ export const clearTasks = (): ClearTasksAction => ({
   type: CLEAR_TASKS,
 });
 
+export const createTask = (status: any, message: any): CreateTaskAction => ({
+  type: CREATE_TASK,
+  message,
+  status,
+});
+
 export type TaskState = {
   currentTask: any,
   taskList: any,
@@ -72,7 +84,8 @@ export type TaskActions =
   | TaskFailedAction
   | GetTasksAction
   | SetCurrentTaskAction
-  | ClearTasksAction;
+  | ClearTasksAction
+  | CreateTaskAction;
 
 // Reducer
 
@@ -93,7 +106,12 @@ export default function(state: TaskState = defaultState, action: TaskActions): T
         taskList: action.tasks,
         status: types.LOADED,
       };
-
+    case CREATE_TASK:
+      return {
+        ...state,
+        message: action.message,
+        status: action.status,
+      };
     case SET_CURRENT_TASK:
       return {
         currentTask: action.task,
@@ -140,5 +158,61 @@ export const getProcessTasksThunk = (processId: number): Function => async (
   } catch (error) {
     console.log('fail');
     dispatch(taskFailure(error));
+  }
+};
+
+export const createTaskThunk = (
+  title: string,
+  description: string,
+  processId: number,
+  managerId: number,
+  userId: number,
+): Function => async (dispatch: ReduxDispatch): Promise<*> => {
+  try {
+    taskRequest();
+    // eslint-disable-next-line no-undef
+    const response = await fetch(`https://murmuring-eyrie-77138.herokuapp.com/task/create_task/`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title,
+        description,
+        process_id: processId,
+        manager_id: managerId,
+      }),
+    });
+    console.log('saddas');
+    const json = await response.json();
+    console.log('json', json);
+    if (json.error) {
+      dispatch(taskFailure(json.error));
+    } else {
+      const message = json.message;
+      const status = json.status;
+
+      const taskData = TaskMapper.fromAPIResponse(json.task);
+      console.log('pdt', taskData);
+      // eslint-disable-next-line no-undef
+      const responseUser = await fetch(
+        `https://murmuring-eyrie-77138.herokuapp.com/process/${taskData.id}/members/add/`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            process_user_id: userId,
+            role: 0,
+          }),
+        },
+      );
+      dispatch(createTask(status, message));
+    }
+  } catch (error) {
+    dispatch(taskFailure((error: error)));
   }
 };

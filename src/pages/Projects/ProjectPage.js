@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import { View, ActivityIndicator, TouchableOpacity, Button } from 'react-native';
+import { View, ActivityIndicator, TouchableOpacity, Button, Alert } from 'react-native';
 import { Card } from 'react-native-elements';
 import { ListItem, Text, Separator, Container, Header, Content, Right } from 'native-base';
 import { connect } from 'react-redux';
@@ -81,8 +81,13 @@ class ProjectPage extends Component<Props, any> {
           <Separator bordered>
             <Text>
               Süreçler
-                
-            
+              <Text
+                onPress={() => {
+                  this.props.navigation.navigate('NewProcess');
+                }}
+              >
+                EKLE
+              </Text>
             </Text>
           </Separator>
           {this.props.process.status === types.LOADING && (

@@ -8,8 +8,9 @@ import { ProcessUserMapper } from '../../mappers/processMember';
 
 // Actions
 export const PROCESS_REQUEST = 'PROCESS_REQUEST';
-export const FAILED = 'FAILED';
+export const PROCESS_FAILED = 'PROCESS_FAILED';
 
+export const CREATE_PROCESS = 'CREATE_PROCESS';
 export const GET_PROCESSES = 'GET_PROCESSES';
 export const SET_CURRENT_PROCESS = 'SET_CURRENT_PROCESS';
 export const CLEAR_PROCESSES = 'CLEAR_PROCESSES';
@@ -22,14 +23,17 @@ export type ProcessRequestAction = {
   type: typeof PROCESS_REQUEST,
 };
 export type ProcessFailedAction = {
-  type: typeof FAILED,
+  type: typeof PROCESS_FAILED,
 };
 
 export type GetProcessesAction = {
   type: typeof GET_PROCESSES,
   processes: Array<Process>,
 };
-
+export type CreateProcessAction = {
+  type: typeof CREATE_PROCESS,
+  process: Process,
+};
 export type ClearProcessesAction = {
   type: typeof CLEAR_PROCESSES,
 };
@@ -55,10 +59,16 @@ const processRequest = (): ProcessRequestAction => ({
 });
 
 const processFailure = (error: any): ProcessFailedAction => ({
-  type: FAILED,
+  type: PROCESS_FAILED,
   error,
 });
 
+const createProcess = (process: Process, status: any, message: Any): CreateProcessAction => ({
+  type: CREATE_PROCESS,
+  process,
+  status,
+  message,
+});
 export const getProcesses = (processes: Array<Process>): GetProcessesAction => ({
   type: GET_PROCESSES,
   processes,
@@ -98,7 +108,8 @@ export type ProcessActions =
   | SetCurrentProcessAction
   | ClearProcessesAction
   | GetProcessMembersAction
-  | AddProcessMemberAction;
+  | AddProcessMemberAction
+  | CreateProcessAction;
 
 // Reducer
 
@@ -118,6 +129,13 @@ export default function(state: ProcessState = defaultState, action: ProcessActio
         currentProcess: state.currentProcess,
         processList: action.processes,
         status: types.LOADED,
+      };
+
+    case CREATE_PROCESS:
+      return {
+        ...state,
+        status: action.status,
+        message: action.message,
       };
     case ADD_PROCESS_MEMBER:
       return {
@@ -139,7 +157,7 @@ export default function(state: ProcessState = defaultState, action: ProcessActio
         status: types.LOADED,
         currentProcess: { ...state.currentProcess, members: action.members },
       };
-    case FAILED:
+    case PROCESS_FAILED:
       return {
         currentProcess: null,
         processList: [],
@@ -233,5 +251,62 @@ export const getProcessesThunk = (projectId: number): Function => async (
     dispatch(getProcesses(processes));
   } catch (error) {
     dispatch(processFailure(error));
+  }
+};
+
+export const createProcessThunk = (
+  title: string,
+  description: string,
+  projectId: number,
+  userId: number,
+): Function => async (dispatch: ReduxDispatch): Promise<*> => {
+  try {
+    processRequest();
+    // eslint-disable-next-line no-undef
+    const response = await fetch(
+      `https://murmuring-eyrie-77138.herokuapp.com/process/create_process/`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          project_id: projectId,
+        }),
+      },
+    );
+    console.log('saddas');
+    const json = await response.json();
+    console.log('json', json);
+    if (json.error) {
+      dispatch(processFailure(json.error));
+    } else {
+      const message = json.message;
+      const status = json.status;
+
+      const processData = ProcessMapper.fromAPIResponse(json.process);
+      console.log('pdt', processData);
+      // eslint-disable-next-line no-undef
+      const responseUser = await fetch(
+        `https://murmuring-eyrie-77138.herokuapp.com/process/${processData.id}/members/add/`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            role: 0,
+          }),
+        },
+      );
+      dispatch(createProcess(processData, status, message));
+    }
+  } catch (error) {
+    dispatch(processFailure((error: error)));
   }
 };

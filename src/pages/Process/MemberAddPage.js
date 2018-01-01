@@ -5,7 +5,7 @@ import { Alert, ActivityIndicator } from 'react-native';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Card, FormLabel, FormInput, Text, Button } from 'react-native-elements';
-import { Content, List, ListItem, View, Body, Right } from 'native-base';
+import { Content, List, ListItem, View, Body, Right,CardItem } from 'native-base';
 
 import { addProcessMemberThunk as addMember } from '../../redux/modules/process';
 import * as processRoles from '../../enums/processRoles';
@@ -30,6 +30,9 @@ class MemberAddPage extends Component<Props, any> {
         <View>
           <Card>
             <List>
+            <CardItem header>
+            <Text>Proje Üyeleri</Text>
+          </CardItem>
               {this.props.project.currentProject.members.map(user => (
                 <ListItem key={user.id}>
                   <Body>
@@ -47,6 +50,7 @@ class MemberAddPage extends Component<Props, any> {
                             user.id,
                             processRoles.PROCESS_MEMBER,
                           );
+                          Alert.alert('Kullanıcı sürece eklendi');
                         }}
                       />
                     )}
