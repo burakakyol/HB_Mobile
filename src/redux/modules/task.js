@@ -197,7 +197,7 @@ export const createTaskThunk = (
       console.log('pdt', taskData);
       // eslint-disable-next-line no-undef
       const responseUser = await fetch(
-        `https://murmuring-eyrie-77138.herokuapp.com/process/${taskData.id}/members/add/`,
+        `https://murmuring-eyrie-77138.herokuapp.com/task/${taskData.id}/members/add/`,
         {
           method: 'POST',
           headers: {
@@ -206,13 +206,13 @@ export const createTaskThunk = (
           },
           body: JSON.stringify({
             process_user_id: userId,
-            role: 0,
           }),
         },
       );
       dispatch(createTask(status, message));
     }
   } catch (error) {
+    console.log('das');
     dispatch(taskFailure((error: error)));
   }
 };

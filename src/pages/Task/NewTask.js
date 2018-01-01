@@ -39,13 +39,22 @@ class NewTask extends Component<Props, State> {
 
   onSubmitEvent() {
     const projectUser = this.getProjectUser();
-
-    Alert.alert('Süreç başarıyla eklendi');
+    console.log('param3', this.props.process.currentProcess.id);
+    console.log('param4', projectUser);
+    console.log('param5', this.state.selectedUser);
+    this.props.create(
+      this.state.title,
+      this.state.description,
+      this.props.process.currentProcess.id,
+      projectUser.id,
+      this.state.selectedUser,
+    );
+    Alert.alert('Görev başarıyla eklendi');
   }
 
   getProjectUser() {
     return this.props.process.currentProcess.members.find(
-      member => member.user.id === this.props.user.user.id,
+      member => member.user.user.id === this.props.user.user.id,
     );
   }
 
@@ -56,7 +65,7 @@ class NewTask extends Component<Props, State> {
           <Card>
             <FormLabel>Görev Adı</FormLabel>
             <FormInput
-              placeholder="Süreç adı..."
+              placeholder="Görev adı..."
               value={this.state.title || ''}
               onChangeText={val => this.setState({ title: val })}
             />
